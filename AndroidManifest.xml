@@ -202,7 +202,7 @@
     <!-- Browser tests.  Invoke with: -->
     <!--      adb shell am instrument -w com.android.browser/.BrowserTestRunner -->
     <!-- Commenting unused code to fix ClassNotFoundException in monkey as there is no implementation
-         for below instrumentation class test runners
+         for below instrumentation class test runners.
     <instrumentation android:name="BrowserTestRunner"
         android:targetPackage="com.android.browser"
         android:label="@string/activity_instrumentation_test_runner"
@@ -221,6 +221,5 @@
         android:label="Browser Launch Performance"
     />
     -->
-
 </manifest>
 
