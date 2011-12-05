@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Not a Contribution, Apache license notifications and license are retained
+ * for attribution purposes only.
+ *
  * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +16,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * NOTE: This file has been modified by Sony Mobile Communications AB.
+ * Modifications are licensed under the License.
  */
 
 package com.android.browser;
@@ -22,6 +29,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -34,16 +42,22 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.android.browser.UrlInputView.StateListener;
+import com.android.browser.widget.RealViewSwitcher;
+
+import java.util.List;
 
 /**
  * Ui for regular phone screen sizes
  */
-public class PhoneUi extends BaseUi {
+public class PhoneUi extends BaseUi implements RealViewSwitcher.OnScreenSwitchListener,
+                                               RealViewSwitcher.OnScrollStartedListener {
 
     private static final String LOGTAG = "PhoneUi";
     private static final int MSG_INIT_NAVSCREEN = 100;
@@ -52,8 +66,11 @@ public class PhoneUi extends BaseUi {
     private AnimScreen mAnimScreen;
     private NavigationBarPhone mNavigationBar;
     private int mActionBarHeight;
+    private RealViewSwitcher mRealViewSwitcher;
+    private boolean mSlideTabTransitionsEnabled;
 
     boolean mAnimating;
+    boolean mOrientationChanged;
 
     /**
      * @param browser
@@ -68,6 +85,62 @@ public class PhoneUi extends BaseUi {
                 com.android.internal.R.attr.actionBarSize, heightValue, true);
         mActionBarHeight = TypedValue.complexToDimensionPixelSize(heightValue.data,
                 browser.getResources().getDisplayMetrics());
+
+        if (BrowserSettings.getInstance().useSlideTabTransitions())
+            setupSlideTabTransitions();
+    }
+
+    @Override
+    public void setUseSlideTransitions(boolean enabled) {
+        if (enabled)
+            enableSlideTabTransitions();
+        else
+            disableSlideTabTransitions();
+    }
+
+    private void setupSlideTabTransitions() {
+        mSlideTabTransitionsEnabled = true;
+        mRealViewSwitcher = new RealViewSwitcher(mActivity);
+        mRealViewSwitcher.setOnScreenSwitchListener(this);
+        mRealViewSwitcher.setOnScrollStartedListener(this);
+        mContentView.addView(mRealViewSwitcher, COVER_SCREEN_PARAMS);
+        mTitleBar.setUseSlideTransitions(mSlideTabTransitionsEnabled);
+    }
+
+    private void enableSlideTabTransitions() {
+        if (mSlideTabTransitionsEnabled)
+            return;
+
+        // Quick Controls are not compatible with Slide Tab Transitions because they use an edge touch to activate.
+        if (BrowserSettings.getInstance().useQuickControls())
+            setUseQuickControls(false);
+
+        // Remove the current WebView from the contentView and add the tabs to the RVS.
+        setupSlideTabTransitions();
+
+        for (Tab tab: mTabControl.getTabs())
+            attachTabToContentView(tab);
+
+        setActiveTab(mTabControl.getCurrentTab());
+    }
+
+    private void disableSlideTabTransitions() {
+        if (!mSlideTabTransitionsEnabled)
+            return;
+
+        mRealViewSwitcher.removeAllViews();
+        ViewGroup parent = (ViewGroup)mRealViewSwitcher.getParent();
+        // Remove RVS from the content view.
+        if (parent != null)
+            parent.removeView(mRealViewSwitcher);
+
+        mRealViewSwitcher = null;
+        mSlideTabTransitionsEnabled = false;
+        mTitleBar.setUseSlideTransitions(mSlideTabTransitionsEnabled);
+
+        Tab currentTab = mTabControl.getCurrentTab();
+        setActiveTab(currentTab);
+        attachTabToContentView(currentTab);
     }
 
     @Override
@@ -126,11 +199,37 @@ public class PhoneUi extends BaseUi {
         }
     }
 
+    private boolean isSlideTabTransitionsEnabled() {
+        return mSlideTabTransitionsEnabled;
+    }
+
+    @Override
+    public void updateTabs(List<Tab> tabs) {
+        super.updateTabs(tabs);
+        if (!isSlideTabTransitionsEnabled())
+            return;
+
+        int childCount = mRealViewSwitcher.getChildCount();
+        int tabCount = mTabControl.getTabCount();
+        if (childCount == tabCount)
+            return;
+
+        // If there are more tabs than children, then we must be doing a restore. We need to attach all the restored
+        // tabs to the RVS.
+        for (Tab tab: mTabControl.getTabs())
+            attachTabToContentView(tab);
+    }
+
     @Override
     public void setActiveTab(final Tab tab) {
         mTitleBar.cancelTitleBarAnimation(true);
         mTitleBar.setSkipTitleBarAnimations(true);
-        super.setActiveTab(tab);
+        // No need to reattach the tab to the content view on orientation
+        // change. We just need to focus and show the URL bar.
+        if (!mOrientationChanged)
+            super.setActiveTab(tab);
+        else
+            mOrientationChanged = false;
         BrowserWebView view = (BrowserWebView) tab.getWebView();
         // TabControl.setCurrentTab has been called before this,
         // so the tab is guaranteed to have a webview
@@ -138,11 +237,19 @@ public class PhoneUi extends BaseUi {
             Log.e(LOGTAG, "active tab with no webview detected");
             return;
         }
+
+        // Need to keep to backup on tab switch otherwise restore will open to the last created tab instead of the
+        // last tab the user was looking at.
+        if (isSlideTabTransitionsEnabled())
+            ((Controller)mUiController).backupState();
+
         // Request focus on the top window.
         if (mUseQuickControls) {
             mPieControl.forceToTop(mContentView);
             view.setTitleBar(null);
             mTitleBar.setShowProgressOnly(true);
+        } else if (isSlideTabTransitionsEnabled()) {
+            showTitleBarForDuration();
         } else {
             view.setTitleBar(mTitleBar);
         }
@@ -150,6 +257,110 @@ public class PhoneUi extends BaseUi {
         mNavigationBar.onStateChanged(StateListener.STATE_NORMAL);
         updateLockIconToLatest(tab);
         mTitleBar.setSkipTitleBarAnimations(false);
+
+        if (isSlideTabTransitionsEnabled()) {
+            int tabPosition = mTabControl.getTabPosition(tab);
+            // The setActiveTab call may have been triggered by a RVS scroll.
+            if (mRealViewSwitcher.getCurrentScreen() != tabPosition)
+                mRealViewSwitcher.setCurrentScreen(tabPosition);
+        }
+    }
+
+    /*
+     * Instead of attaching tabs directly to the content view, we attach them to the RealViewSwitcher.
+     */
+    @Override
+    protected void attachTabToContentView(Tab tab) {
+        if (!isSlideTabTransitionsEnabled()) {
+            super.attachTabToContentView(tab);
+            return;
+        }
+        if ((tab == null) || (tab.getWebView() == null))
+            return;
+
+        View container = tab.getViewContainer();
+        WebView mainView  = tab.getWebView();
+
+        // Attach the WebView to the container and then attach the
+        // container to the RVS.
+        FrameLayout wrapper =
+                (FrameLayout) container.findViewById(R.id.webview_wrapper);
+        ViewGroup parent = (ViewGroup) mainView.getParent();
+        if (parent != wrapper) {
+            if (parent != null) {
+                Log.w(LOGTAG, "mMainView already has a parent in"
+                        + " attachTabToContentView!");
+                parent.removeView(mainView);
+            }
+            wrapper.addView(mainView);
+        } else {
+            Log.w(LOGTAG, "mMainView is already attached to wrapper in"
+                    + " attachTabToContentView!");
+        }
+        int tabPosition = mTabControl.getTabPosition(tab);
+
+        if (mRealViewSwitcher.getChildAt(tabPosition) == null) {
+            parent = (ViewGroup)container.getParent();
+            // When we resume, the container will already be attached to the content view.
+            if (parent != null) {
+                Log.w(LOGTAG, "container is already attached to " + parent);
+                parent.removeView(container);
+            }
+            mRealViewSwitcher.addView(container);
+        } else {
+             Log.w(LOGTAG, "There's already a RVS child at " + tabPosition);
+            parent = (ViewGroup)container.getParent();
+            if (parent != null)
+                parent.removeView(container);
+            mRealViewSwitcher.addView(container, tabPosition);
+        }
+
+        mUiController.attachSubWindow(tab);
+    }
+
+    @Override
+    protected void removeTabFromContentView(Tab tab) {
+        if (!isSlideTabTransitionsEnabled()) {
+            super.removeTabFromContentView(tab);
+            return;
+        }
+
+        if ((tab == null) || (tab.getWebView() == null))
+            return;
+
+        mTitleBar.cancelTitleBarAnimation(true);
+        mTitleBar.setSkipTitleBarAnimations(true);
+        mUiController.endActionMode();
+        mUiController.removeSubWindow(tab);
+
+        hideTitleBar();
+
+        ErrorConsoleView errorConsole = tab.getErrorConsole(false);
+        if (errorConsole != null)
+            mErrorConsoleContainer.removeView(errorConsole);
+        // We don't want to remove tabs from the RVS unless they are being closed.
+    }
+
+    @Override
+    public void removeTab(Tab tab) {
+        if (!isSlideTabTransitionsEnabled()) {
+            super.removeTab(tab);
+            return;
+        }
+        // Tab is being closed; remove container from the RVS.
+        View container = tab.getViewContainer();
+        mRealViewSwitcher.removeView(container);
+        if (tab == mActiveTab)
+            mActiveTab = null;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        if (isSlideTabTransitionsEnabled()) {
+            mOrientationChanged = true;
+            mRealViewSwitcher.orientationChanged(mActivity);
+        }
     }
 
     // menu handling callbacks
@@ -421,6 +632,9 @@ public class PhoneUi extends BaseUi {
 
     @Override
     public boolean needsRestoreAllTabs() {
+        // RVS needs all the WebViews to be created so that it can attach them.
+        if (isSlideTabTransitionsEnabled())
+            return true;
         return false;
     }
 
@@ -435,6 +649,25 @@ public class PhoneUi extends BaseUi {
     @Override
     public boolean shouldCaptureThumbnails() {
         return true;
+    }
+
+    // RealViewSwitcher.OnScreenSwitchListener
+    public void onScreenSwitched(int screen) {
+        Tab currentTab = mTabControl.getTab(screen);
+        // When Controller starts it might get delayed and when that happens we
+        // don't have any updated tabs yet.
+        if (currentTab != null) {
+            mTabControl.setCurrentTab(currentTab);
+            setActiveTab(currentTab);
+        }
+    }
+
+    // RealViewSwitcher.OnScrollStartedListener
+    public void onScrollStarted() {
+        if (mRealViewSwitcher.getChildCount() == 1)
+            return;
+
+        removeTabFromContentView(getActiveTab());
     }
 
     static class AnimScreen {

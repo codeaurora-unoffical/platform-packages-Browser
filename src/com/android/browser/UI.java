@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Not a Contribution, Apache license notifications and license are retained
+ * for attribution purposes only.
+ *
  * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -143,6 +147,8 @@ public interface UI {
     void setFullscreen(boolean enabled);
 
     void setUseQuickControls(boolean enabled);
+
+    void setUseSlideTransitions(boolean enabled);
 
     public boolean shouldCaptureThumbnails();
 

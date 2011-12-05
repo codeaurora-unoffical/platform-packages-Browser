@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Not a Contribution, Apache license notifications and license are retained
+ * for attribution purposes only.
+ *
  * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +24,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
 import com.android.browser.BrowserSettings;
@@ -41,5 +46,37 @@ public class LabPreferencesFragment extends PreferenceFragment {
             PreferenceScreen screen = getPreferenceScreen();
             screen.removePreference(webGL);
         }
+        // Slide Transitions and Quick Actions are incompatible. Disabling the
+        // other when one is enabled.
+        CheckBoxPreference slideTransitions = (CheckBoxPreference)
+            findPreference(PreferenceKeys.PREF_ENABLE_SLIDE_TAB_TRANSITIONS);
+
+        CheckBoxPreference quickControls = (CheckBoxPreference)
+            findPreference(PreferenceKeys.PREF_ENABLE_QUICK_CONTROLS);
+
+        if (slideTransitions == null || quickControls == null)
+            return;
+
+        if (slideTransitions.isChecked())
+            quickControls.setEnabled(false);
+        else if (quickControls.isChecked())
+            slideTransitions.setEnabled(false);
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen screen, Preference preference) {
+        PreferenceManager manager = preference.getPreferenceManager();
+        if (PreferenceKeys.PREF_ENABLE_QUICK_CONTROLS.equals(preference.getKey())) {
+            CheckBoxPreference slideTransitions = (CheckBoxPreference)
+                manager.findPreference(PreferenceKeys.PREF_ENABLE_SLIDE_TAB_TRANSITIONS);
+            if (slideTransitions != null)
+                slideTransitions.setEnabled(!((CheckBoxPreference)preference).isChecked());
+        } else if (PreferenceKeys.PREF_ENABLE_SLIDE_TAB_TRANSITIONS.equals(preference.getKey())) {
+            CheckBoxPreference quickControls = (CheckBoxPreference)
+                manager.findPreference(PreferenceKeys.PREF_ENABLE_QUICK_CONTROLS);
+            if (quickControls != null)
+                quickControls.setEnabled(!((CheckBoxPreference)preference).isChecked());
+        }
+        return true;
     }
 }

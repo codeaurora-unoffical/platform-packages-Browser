@@ -1,6 +1,9 @@
 /*
+ * Copyright (c) 2011, 2012, The Linux Foundation. All rights reserved.
+ * Not a Contribution, Apache license notifications and license are retained
+ * for attribution purposes only.
+ *
  * Copyright (C) 2011 The Android Open Source Project
- * Copyright (c) 2011, 2012, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -387,6 +390,10 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             }
         } else if (PREF_LINK_PREFETCH.equals(key)) {
             updateConnectionType();
+        } else if (PREF_ENABLE_SLIDE_TAB_TRANSITIONS.equals(key)) {
+            if (mController != null && mController.getUi() != null) {
+                mController.getUi().setUseSlideTransitions(sharedPreferences.getBoolean(key, true));
+            }
         }
     }
 
@@ -842,6 +849,10 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
 
     public boolean useFullscreen() {
         return mPrefs.getBoolean(PREF_FULLSCREEN, false);
+    }
+
+    public boolean useSlideTabTransitions() {
+        return mPrefs.getBoolean(PREF_ENABLE_SLIDE_TAB_TRANSITIONS, true);
     }
 
     public boolean useInvertedRendering() {
