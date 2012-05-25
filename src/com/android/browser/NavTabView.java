@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Not a Contribution, Apache license notifications and license are retained
+ * for attribution purposes only.
+ *
  * Copyright (C) 2011 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -108,14 +112,16 @@ public class NavTabView extends LinearLayout {
     }
 
     protected void setWebView(Tab tab) {
+        if (tab == null)
+            return;
+        // No new tab animation from the NavTabView since there is already an animation.
+        tab.setIsNewTab(false);
         mTab = tab;
         setTitle();
         Bitmap image = tab.getScreenshot();
         if (image != null) {
             mImage.setImageBitmap(image);
-            if (tab != null) {
-                mImage.setContentDescription(tab.getTitle());
-            }
+            mImage.setContentDescription(tab.getTitle());
         }
     }
 

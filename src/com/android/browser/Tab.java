@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Not a Contribution, Apache license notifications and license are retained
+ * for attribution purposes only.
+ *
  * Copyright (C) 2009 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -251,6 +255,9 @@ class Tab implements PictureListener {
     static final String INCOGNITO = "privateBrowsingEnabled";
     static final String USERAGENT = "useragent";
     static final String CLOSEFLAG = "closeOnBack";
+
+    // Was this tab newly created? Used for new tab animation.
+    private boolean mIsNewTab;
 
     // Container class for the next error dialog that needs to be displayed
     private class ErrorDialog {
@@ -2043,5 +2050,13 @@ class Tab implements PictureListener {
             // sub-resource.
             setSecurityState(SecurityState.SECURITY_STATE_MIXED);
         }
+    }
+
+    public boolean isNewTab() {
+        return mIsNewTab;
+    }
+
+    public void setIsNewTab(boolean isNewTab) {
+        mIsNewTab = isNewTab;
     }
 }
