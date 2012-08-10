@@ -45,6 +45,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.AnimatedCustomViewCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClassic;
@@ -79,7 +80,6 @@ public abstract class BaseUi implements UI {
     private static final int MSG_HIDE_TITLEBAR = 1;
     private static final int MSG_HIDE_CUSTOM_VIEW = 2;
     public static final int HIDE_TITLEBAR_DELAY = 1500; // in ms
-    public static final int HIDE_CUSTOM_VIEW_DELAY = 750; // in ms
 
     Activity mActivity;
     UiController mUiController;
@@ -97,6 +97,7 @@ public abstract class BaseUi implements UI {
     private FrameLayout mFixedTitlebarContainer;
 
     private View mCustomView;
+    private boolean mCustomViewAnimationStarted;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
     private int mOriginalOrientation;
 
@@ -542,12 +543,15 @@ public abstract class BaseUi implements UI {
         mActivity.setRequestedOrientation(requestedOrientation);
     }
 
-    private void hideCustomViewAfterDuration() {
+    private void hideCustomViewAfterDuration(long delayMillis) {
         Message msg = Message.obtain(mHandler, MSG_HIDE_CUSTOM_VIEW);
-        mHandler.sendMessageDelayed(msg, HIDE_CUSTOM_VIEW_DELAY);
+        mHandler.sendMessageDelayed(msg, delayMillis);
     }
 
     private void hideCustomView() {
+        if (mCustomView == null)
+            return;
+        mCustomViewCallback.onCustomViewHidden();
         setFullscreen(false);
         FrameLayout decor = (FrameLayout) mActivity.getWindow().getDecorView();
         decor.removeView(mFullscreenContainer);
@@ -555,6 +559,7 @@ public abstract class BaseUi implements UI {
         mCustomView = null;
         // Show the content view.
         mActivity.setRequestedOrientation(mOriginalOrientation);
+        mCustomViewAnimationStarted = false;
     }
 
     @Override
@@ -562,8 +567,15 @@ public abstract class BaseUi implements UI {
         ((BrowserWebView) getWebView()).setVisibility(View.VISIBLE);
         if (mCustomView == null)
             return;
-        mCustomViewCallback.onCustomViewHidden();
-        hideCustomViewAfterDuration();
+
+        if (mCustomViewCallback instanceof AnimatedCustomViewCallback && !mCustomViewAnimationStarted) {
+            mCustomViewAnimationStarted = true;
+            AnimatedCustomViewCallback animatedCustomViewCallback = (AnimatedCustomViewCallback) mCustomViewCallback;
+            animatedCustomViewCallback.onCustomViewHiddenAnimationStart();
+            hideCustomViewAfterDuration(animatedCustomViewCallback.getAnimationDelay());
+        } else {
+            hideCustomView();
+        }
     }
 
     @Override
