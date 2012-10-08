@@ -195,7 +195,23 @@ public class DownloadHandler {
         request.setMimeType(mimetype);
         // set downloaded file destination to /sdcard/Download.
         // or, should it be set to one of several Environment.DIRECTORY* dirs depending on mimetype?
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        try
+        {
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        }
+        catch(IllegalStateException e)
+        {
+            int title;
+            String msg;
+            msg = activity.getString(R.string.download_no_sdcard_dlg_msg, filename);
+            title = R.string.download_no_sdcard_dlg_title;
+            new AlertDialog.Builder(activity)
+                                 .setTitle(title)
+                                 .setIcon(android.R.drawable.ic_dialog_alert)
+                                 .setMessage(msg)
+                                 .setPositiveButton(R.string.ok, null)
+                                 .show();
+        }
         // let this downloaded file be scanned by MediaScanner - so that it can 
         // show up in Gallery app, for example.
         request.allowScanningByMediaScanner();
