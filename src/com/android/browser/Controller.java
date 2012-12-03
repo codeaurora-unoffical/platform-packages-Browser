@@ -1545,8 +1545,6 @@ public class Controller
         nav.setEnabled(isNavDump);
 
         boolean showDebugSettings = mSettings.isDebugEnabled();
-        final MenuItem uaSwitcher = menu.findItem(R.id.ua_desktop_menu_id);
-        uaSwitcher.setChecked(isDesktopUa);
         menu.setGroupVisible(R.id.LIVE_MENU, isLive);
         menu.setGroupVisible(R.id.SNAPSHOT_MENU, !isLive);
         menu.setGroupVisible(R.id.COMBO_MENU, false);
@@ -1678,10 +1676,6 @@ public class Controller
 
             case R.id.view_downloads_menu_id:
                 viewDownloads();
-                break;
-
-            case R.id.ua_desktop_menu_id:
-                toggleUserAgent();
                 break;
 
             case R.id.window_one_menu_id:

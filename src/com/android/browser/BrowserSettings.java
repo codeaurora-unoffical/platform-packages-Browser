@@ -750,10 +750,11 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     }
 
     public int getUserAgent() {
+        // Set default UA string as Destop
         if (!isDebugEnabled()) {
-            return 0;
+            return 1;
         }
-        return Integer.parseInt(mPrefs.getString(PREF_USER_AGENT, "0"));
+        return Integer.parseInt(mPrefs.getString(PREF_USER_AGENT, "1"));
     }
 
     // -----------------------------
