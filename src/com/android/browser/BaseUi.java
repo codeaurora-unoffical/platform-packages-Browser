@@ -225,13 +225,17 @@ public abstract class BaseUi implements UI {
     // Tab callbacks
     @Override
     public void onTabDataChanged(Tab tab) {
+        updateTitleBar(tab);
+        onProgressChanged(tab);
+    }
+
+    protected void updateTitleBar(Tab tab) {
         setUrlTitle(tab);
         setFavicon(tab);
         updateLockIconToLatest(tab);
         updateNavigationState(tab);
         mTitleBar.onTabDataChanged(tab);
         mNavigationBar.onTabDataChanged(tab);
-        onProgressChanged(tab);
     }
 
     @Override
