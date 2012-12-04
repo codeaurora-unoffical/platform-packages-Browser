@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Not a Contribution, Apache license notifications and license are retained
+ * for attribution purposes only.
+ *
  * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,6 +55,7 @@ public class TitleBar extends RelativeLayout {
     private AutologinBar mAutoLogin;
     private NavigationBarBase mNavBar;
     private boolean mUseQuickControls;
+    private boolean mUseSlideTransitions;
     private SnapshotBar mSnapshotBar;
 
     //state
@@ -116,7 +121,7 @@ public class TitleBar extends RelativeLayout {
     }
 
     private void setFixedTitleBar() {
-        boolean isFixed = !mUseQuickControls
+        boolean isFixed = !mUseQuickControls && !mUseSlideTransitions
                 && !mContext.getResources().getBoolean(R.bool.hide_title);
         // If getParent() returns null, we are initializing
         ViewGroup parent = (ViewGroup)getParent();
@@ -142,6 +147,15 @@ public class TitleBar extends RelativeLayout {
 
     public UiController getUiController() {
         return mUiController;
+    }
+
+    public void setUseSlideTransitions(boolean use) {
+        mUseSlideTransitions = use;
+        setFixedTitleBar();
+        if (use)
+            setVisibility(View.GONE);
+        else
+            setVisibility(View.VISIBLE);
     }
 
     public void setUseQuickControls(boolean use) {
@@ -176,7 +190,7 @@ public class TitleBar extends RelativeLayout {
 
     void show() {
         cancelTitleBarAnimation(false);
-        if (mUseQuickControls || mSkipTitleBarAnimations) {
+        if (mUseQuickControls || mSkipTitleBarAnimations || mUseSlideTransitions) {
             this.setVisibility(View.VISIBLE);
             this.setTranslationY(0);
         } else {
@@ -195,8 +209,8 @@ public class TitleBar extends RelativeLayout {
     }
 
     void hide() {
-        if (mUseQuickControls) {
-            this.setVisibility(View.GONE);
+        if (mUseQuickControls || mUseSlideTransitions) {
+            setVisibility(View.GONE);
         } else {
             if (mIsFixedTitleBar) return;
             if (!mSkipTitleBarAnimations) {
@@ -267,7 +281,7 @@ public class TitleBar extends RelativeLayout {
             mNavBar.onProgressStopped();
             // check if needs to be hidden
             if (!isEditingUrl() && !wantsToBeVisible()) {
-                if (mUseQuickControls) {
+                if (mUseQuickControls || mUseSlideTransitions) {
                     hide();
                 } else {
                     mBaseUi.showTitleBarForDuration();
@@ -291,7 +305,7 @@ public class TitleBar extends RelativeLayout {
     }
 
     public int getEmbeddedHeight() {
-        if (mUseQuickControls || mIsFixedTitleBar) return 0;
+        if (mUseSlideTransitions || mUseQuickControls || mIsFixedTitleBar) return 0;
         return calculateEmbeddedHeight();
     }
 
@@ -314,7 +328,7 @@ public class TitleBar extends RelativeLayout {
     }
 
     public void showAutoLogin(boolean animate) {
-        if (mUseQuickControls) {
+        if (mUseSlideTransitions || mUseQuickControls) {
             mBaseUi.showTitleBar();
         }
         if (mAutoLogin == null) {
@@ -328,7 +342,7 @@ public class TitleBar extends RelativeLayout {
     }
 
     public void hideAutoLogin(boolean animate) {
-        if (mUseQuickControls) {
+        if (mUseSlideTransitions || mUseQuickControls) {
             mBaseUi.hideTitleBar();
             mAutoLogin.setVisibility(View.GONE);
             mBaseUi.refreshWebView();
