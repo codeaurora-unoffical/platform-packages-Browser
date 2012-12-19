@@ -463,6 +463,9 @@ public abstract class BaseUi implements UI {
     }
 
     public void editUrl(boolean clearInput, boolean forceIME) {
+        if (mCustomView != null) {
+            mUiController.hideCustomView();
+        }
         if (mUiController.isInCustomActionMode()) {
             mUiController.endActionMode();
         }
