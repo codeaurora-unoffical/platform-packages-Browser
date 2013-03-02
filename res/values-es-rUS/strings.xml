@@ -105,7 +105,7 @@
     <string name="saving_snapshot" msgid="1693789062351182809">"Guardando…"</string>
     <string name="snapshot_failed" msgid="4584580873565876033">"La página no se guardó para leer sin conexión."</string>
     <string name="contextheader_folder_bookmarkcount" msgid="353987136645619089">"<xliff:g id="BOOKMARK_COUNT">%d</xliff:g> Marcadores"</string>
-    <string name="contextheader_folder_empty" msgid="974171637803391651">"Vaciar carpeta"</string>
+    <string name="contextheader_folder_empty" msgid="974171637803391651">"Carpeta Vacia"</string>
     <string name="contextmenu_openlink" msgid="7237961252214188935">"Abrir"</string>
     <string name="contextmenu_openlink_newwindow" msgid="1205313604181761403">"Abrir en pestaña nueva"</string>
     <string name="contextmenu_openlink_newwindow_background" msgid="4690381019116746687">"Abrir vínculo en nueva pestaña en segundo plano"</string>
@@ -118,7 +118,7 @@
     <string name="contextmenu_set_wallpaper" msgid="3691902960115350686">"Establecer como fondo de pantalla"</string>
     <string name="contextmenu_dial_dot" msgid="5856550683415933806">"Marcar…"</string>
     <string name="contextmenu_add_contact" msgid="3183511922223645716">"Agregar contacto"</string>
-    <string name="contextmenu_send_mail" msgid="1014513374828775660">"Enviar correo"</string>
+    <string name="contextmenu_send_mail" msgid="1014513374828775660">"Enviar correo electrónico"</string>
     <string name="contextmenu_map" msgid="7471390435434034912">"Situar en el mapa"</string>
     <string name="choosertitle_sharevia" msgid="4600490613341909086">"Compartir mediante"</string>
     <string name="clear" msgid="7070043081700011461">"Eliminar"</string>
@@ -155,7 +155,7 @@
     <string name="pref_general_title" msgid="1946872771219249323">"General"</string>
     <string name="pref_general_sync_title" msgid="3138637035975860324">"Sincronización"</string>
     <string name="pref_general_autofill_title" msgid="547881256865816858">"Autocompletar"</string>
-    <string name="pref_autofill_enabled" msgid="1015751713312396713">"Completar formulario automáticam."</string>
+    <string name="pref_autofill_enabled" msgid="1015751713312396713">"Formulario autocompletar."</string>
     <string name="pref_autofill_enabled_summary" msgid="7659954073892471496">"Completa formularios web con un solo toque"</string>
     <string name="pref_autofill_profile_editor" msgid="8934844472922113166">"Texto para autocompletar"</string>
     <string name="pref_autofill_profile_editor_summary" msgid="4864447251676856190">"Configurar texto para autocompletar formularios web"</string>
@@ -167,7 +167,7 @@
     <string name="autologin_bar_error" msgid="7470001207395920811">"No se pudo acceder."</string>
     <string name="autofill_profile_editor_heading" msgid="4798644544927738078">"Escribe el texto que deseas autocompletar en los formularios web."</string>
     <string name="autofill_profile_editor_name" msgid="8566130291459685955">"Nombre completo:"</string>
-    <string name="autofill_profile_editor_email_address" msgid="7967585896612797173">"Correo:"</string>
+    <string name="autofill_profile_editor_email_address" msgid="7967585896612797173">"Correo electrónico:"</string>
     <string name="autofill_profile_editor_company_name" msgid="2813443159949210417">"Nombre de la empresa:"</string>
     <string name="autofill_profile_editor_address_line_1" msgid="836433242509243081">"Dirección línea 1:"</string>
     <string name="autofill_profile_editor_address_line_1_hint" msgid="5965659598509327172">"Dirección postal, código postal, A/A"</string>
@@ -231,7 +231,7 @@
     <string name="pref_text_zoom" msgid="5171056101805125497">"Ajuste de texto"</string>
     <string name="pref_zoom_on_double_tap" msgid="902786475250741795">"Zoom al tocar dos veces"</string>
     <string name="pref_force_userscalable" msgid="5641500562399892621">"Obligar a activar el zoom"</string>
-    <string name="pref_force_userscalable_summary" msgid="3613242300617172230">"Anular petic. p/controlar zoom"</string>
+    <string name="pref_force_userscalable_summary" msgid="3613242300617172230">"Anular petición para controlar zoom"</string>
     <string name="pref_inverted_category" msgid="1280639705117152207">"Representación de pantalla invertida"</string>
     <string name="pref_inverted" msgid="7613556986776824112">"Representación invertida"</string>
     <string name="pref_inverted_summary" msgid="7357225897413923085">"El negro se convierte en blanco y viceversa."</string>
@@ -354,7 +354,7 @@
     <string name="other_bookmarks" msgid="8021889794475657319">"Otros marcadores"</string>
     <string name="rlz_access_point" msgid="7165847807377650632">"Y1"</string>
     <string name="account_chooser_dialog_title" msgid="3314204833188808194">"Seleccionar la cuenta"</string>
-    <string name="import_bookmarks_dialog_title" msgid="3325557652271172128">"Sincronización con cta de Google"</string>
+    <string name="import_bookmarks_dialog_title" msgid="3325557652271172128">"Sincronizar con la cuenta de Google"</string>
     <string name="import_bookmarks_dialog_description" msgid="2362897194870789609">"Los marcadores de este dispositivo aún no están asociados a una Cuenta de Google. Guarda estos marcadores agregándolos a una cuenta. Si no deseas sincronizarlos, elimínalos."</string>
     <string name="import_bookmarks_dialog_select_add_account" msgid="7643058662272484895">"Agrega marcadores que actualmente tienes en este dispositivo y comienza a sincronizarlos con una Cuenta de Google."</string>
     <string name="import_bookmarks_dialog_delete_select_account" msgid="4333848003180415516">"Elimina los marcadores que actualmente tienes en este dispositivo y comienza a sincronizarlos con una Cuenta de Google."</string>
@@ -396,4 +396,9 @@
     <string name="accessibility_state_incognito" msgid="5786038488425202355">"Página de incógnito"</string>
     <string name="accessibility_state_frozen" msgid="8041539250447035570">"Página guardada"</string>
     <string name="accessibility_transition_navscreen" msgid="2734915619351519547">"Administración de pestañas"</string>
+    <string name="pref_video_preload_summary" >Permitir navegador precargar al vídeo cuando los servidores permiteren</string>
+    <string name="pref_lab_webgl_summary" >Habilitar WebGL</string>
+    <string name="pref_lab_webgl" >WebGL</string>
+    <string name="pref_video_preload_dialogtitle" >Precarga de video</string>
+    <string name="pref_video_preload_title" >Precarga de video</string>
 </resources>
