@@ -33,10 +33,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-
+import com.android.browser.mynavigation.MyNavigationUtil;
 public class HomeProvider extends ContentProvider {
 
-    private static final String TAG = "HomeProvider";
+    private static final String LOGTAG = "HomeProvider";
     public static final String AUTHORITY = "com.android.browser.home";
     public static final String MOST_VISITED = "content://" + AUTHORITY + "/";
 
@@ -81,7 +81,7 @@ public class HomeProvider extends ContentProvider {
             new RequestHandler(getContext(), uri, afd.createOutputStream()).start();
             return pipes[0];
         } catch (IOException e) {
-            Log.e(TAG, "Failed to handle request: " + uri, e);
+            Log.e(LOGTAG, "Failed to handle request: " + uri, e);
             return null;
         }
     }
@@ -90,9 +90,12 @@ public class HomeProvider extends ContentProvider {
             String url) {
         try {
             boolean useMostVisited = BrowserSettings.getInstance().useMostVisitedHomepage();
-            if (useMostVisited && url.startsWith("content://")) {
+            Log.e(LOGTAG, " shouldInterceptRequest url is" + url);
+            if (MyNavigationUtil.MY_NAVIGATION.equals(url) 
+                ||(useMostVisited && url.startsWith("content://"))) {
                 Uri uri = Uri.parse(url);
-                if (AUTHORITY.equals(uri.getAuthority())) {
+                Log.e(LOGTAG, " shouldInterceptRequest uri.getAuthority() is" + uri.getAuthority());
+                if (AUTHORITY.equals(uri.getAuthority()) || MyNavigationUtil.AUTHORITY.equals(uri.getAuthority())) {
                     InputStream ins = context.getContentResolver()
                             .openInputStream(uri);
                     return new WebResourceResponse("text/html", "utf-8", ins);

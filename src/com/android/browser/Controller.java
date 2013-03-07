@@ -38,9 +38,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.net.WebAddress;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -86,6 +88,8 @@ import com.android.browser.IntentHandler.UrlData;
 import com.android.browser.UI.ComboViews;
 import com.android.browser.provider.BrowserProvider2.Thumbnails;
 import com.android.browser.provider.SnapshotProvider.Snapshots;
+import com.android.browser.mynavigation.MyNavigationUtil;
+import com.android.browser.mynavigation.AddMyNavigationPage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -101,6 +105,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qrd.plugin.feature_query.FeatureQuery;
 /**
  * Controller for browser
  */
@@ -221,6 +226,11 @@ public class Controller
     private boolean mBlockEvents;
 
     private String mVoiceResult;
+    //-----add for cmcc test my navigation start-----
+    public static String m_offline_page = "content://com.android.browser.mynavigation/websites";	
+    private boolean mUpdateMNThumbnail;
+    private String mUpdateMNThumbnailUrl;
+    //-----add for cmcc test my navigation end-----
 
     public Controller(Activity browser) {
         mActivity = browser;
@@ -313,10 +323,23 @@ public class Controller
                 // If the intent is ACTION_VIEW and data is not null, the Browser is
                 // invoked to view the content by another application. In this case,
                 // the tab will be close when exit.
-                UrlData urlData = IntentHandler.getUrlDataFromIntent(intent);
+                UrlData urlData = null;
+                if (intent.getData() != null 
+                    && Intent.ACTION_VIEW.equals(intent.getAction())
+                    && intent.getData().toString().startsWith("content://")) {
+                    urlData = new UrlData(intent.getData().toString());
+                } else {
+                    //UrlData urlData = IntentHandler.getUrlDataFromIntent(intent);
+                    urlData = IntentHandler.getUrlDataFromIntent(intent);
+                }
+
                 Tab t = null;
                 if (urlData.isEmpty()) {
-                    t = openTabToHomePage();
+                    if (!FeatureQuery.FEATURE_BROWSER_START_PAGE) {
+                        t = openTabToHomePage();
+                    } else {
+                        t = openTab(m_offline_page, false, true, true);
+                    }
                 } else {
                     t = openTab(urlData);
                 }
@@ -1183,6 +1206,10 @@ public class Controller
                 if (Intent.ACTION_VIEW.equals(intent.getAction())) {
                     Tab t = getCurrentTab();
                     Uri uri = intent.getData();
+		    //-----add for cmcc test my navigation start-----
+                    mUpdateMNThumbnail = true;
+                    mUpdateMNThumbnailUrl = uri.toString();
+		    //-----add for cmcc test my navigation end-----
                     loadUrl(t, uri.toString());
                 } else if (intent.hasExtra(ComboViewActivity.EXTRA_OPEN_ALL)) {
                     String[] urls = intent.getStringArrayExtra(
@@ -1209,6 +1236,20 @@ public class Controller
                     }
                 }
                 break;
+
+		//-----add for cmcc test my navigation start-----
+             case MY_NAVIGATION:
+                if (intent == null || resultCode != Activity.RESULT_OK) {
+                    break;
+                }
+                
+                if (intent.getBooleanExtra("need_refresh", false) && getCurrentTopWebView() != null) {
+                    Log.e(LOGTAG,"my navigation refresh");
+                    getCurrentTopWebView().reload();
+                }
+                break;
+		//-----add for cmcc test my navigation end-----
+
             default:
                 break;
         }
@@ -1305,6 +1346,9 @@ public class Controller
 
         // Show the correct menu group
         final String extra = result.getExtra();
+	//-----modified for cmcc test my navigation start-----
+        final String navigationUrl = MyNavigationUtil.getMyNavigationUrl(extra);
+        Log.e(LOGTAG,"this navigationUrl is " + navigationUrl);
         if (extra == null) return;
         menu.setGroupVisible(R.id.PHONE_MENU,
                 type == WebView.HitTestResult.PHONE_TYPE);
@@ -1312,12 +1356,33 @@ public class Controller
                 type == WebView.HitTestResult.EMAIL_TYPE);
         menu.setGroupVisible(R.id.GEO_MENU,
                 type == WebView.HitTestResult.GEO_TYPE);
-        menu.setGroupVisible(R.id.IMAGE_MENU,
-                type == WebView.HitTestResult.IMAGE_TYPE
-                || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE);
-        menu.setGroupVisible(R.id.ANCHOR_MENU,
-                type == WebView.HitTestResult.SRC_ANCHOR_TYPE
-                || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE);
+
+        String itemUrl = null;
+
+        String url = webview.getOriginalUrl();
+        if (url != null && url.equalsIgnoreCase(MyNavigationUtil.MY_NAVIGATION)) {
+            itemUrl = Uri.decode(navigationUrl);
+            if (itemUrl != null && !MyNavigationUtil.isDefaultMyNavigation(itemUrl)) {
+                menu.setGroupVisible(R.id.MY_NAVIGATION_MENU, type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE);
+            } else {
+                menu.setGroupVisible(R.id.MY_NAVIGATION_MENU, false);
+            }
+            menu.setGroupVisible(R.id.IMAGE_MENU,
+                                 false);
+            menu.setGroupVisible(R.id.ANCHOR_MENU,
+                                 false);
+        } else {
+            menu.setGroupVisible(R.id.MY_NAVIGATION_MENU, false);
+
+            menu.setGroupVisible(R.id.IMAGE_MENU,
+                                 type == WebView.HitTestResult.IMAGE_TYPE
+                                 || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE);
+            menu.setGroupVisible(R.id.ANCHOR_MENU,
+                                 type == WebView.HitTestResult.SRC_ANCHOR_TYPE
+                                 || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE);
+
+        }
+        //-----modified for cmcc test my navigation end-----			
         boolean hitText = type == WebView.HitTestResult.SRC_ANCHOR_TYPE
                 || type == WebView.HitTestResult.PHONE_TYPE
                 || type == WebView.HitTestResult.EMAIL_TYPE
@@ -1407,6 +1472,46 @@ public class Controller
                                 });
                     }
                 }
+            //-----add for cmcc test my navigation start-----
+            if (url != null && url.equalsIgnoreCase(MyNavigationUtil.MY_NAVIGATION)) {
+                menu.setHeaderTitle(navigationUrl);                        
+                // Set the openInNewTab invisible
+                menu.findItem(R.id.open_newtab_context_menu_id).setVisible(false);
+
+                if (itemUrl != null) {
+                    if (!MyNavigationUtil.isDefaultMyNavigation(itemUrl)) {
+                        menu.findItem(R.id.edit_my_navigation_context_menu_id)
+                        .setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                                                        @Override
+                                                        public boolean onMenuItemClick(MenuItem item) {
+                                                            final Intent intent = new Intent(Controller.this.getContext(),
+                                                                                             AddMyNavigationPage.class);
+                                                            Bundle bundle = new Bundle();
+                                                            String url = Uri.decode(navigationUrl);
+                                                            bundle.putBoolean("isAdding", false);
+                                                            bundle.putString("url", url);
+                                                            bundle.putString("name", getNameFromUrl(url));
+                                                            intent.putExtra("websites", bundle);
+                                                            mActivity.startActivityForResult(intent, MY_NAVIGATION);
+                                                            return false;
+                                                        }
+                                                    });
+                        menu.findItem(R.id.delete_my_navigation_context_menu_id)
+                        .setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                                                        @Override
+                                                        public boolean onMenuItemClick(MenuItem item) {
+                                                            showMyNavigationDeleteDialog(Uri.decode(navigationUrl));
+                                                            return false;
+                                                        }
+                                                    });
+                    }
+
+                } else {
+                    Log.e(LOGTAG, "mynavigation onCreateContextMenu itemUrl is null!");
+                }
+            }
+            //-----add for cmcc test my navigation end-----
+
                 if (type == WebView.HitTestResult.SRC_ANCHOR_TYPE) {
                     break;
                 }
@@ -1450,6 +1555,142 @@ public class Controller
         //update the ui
         mUi.onContextMenuCreated(menu);
     }
+    //-----add for cmcc test my navigation start-----
+    public static final int MY_NAVIGATION = 7;
+
+    public void startAddMyNavigation(String url) {
+        final Intent intent = new Intent(Controller.this.getContext(), AddMyNavigationPage.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isAdding", true);
+        bundle.putString("url", url);
+        bundle.putString("name", getNameFromUrl(url));
+        intent.putExtra("websites",bundle);
+
+        mActivity.startActivityForResult(intent, MY_NAVIGATION);
+    }
+
+    private void showMyNavigationDeleteDialog(final String itemUrl){
+        new AlertDialog.Builder(this.getContext())
+            .setTitle(R.string.my_navigation_delete_label)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setMessage(R.string.my_navigation_delete_msg)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    deleteMyNavigationItem(itemUrl);
+                }
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }    
+    
+    private void deleteMyNavigationItem(final String itemUrl) {
+        ContentResolver cr = this.getContext().getContentResolver();
+        Cursor cursor = null;
+
+        try {
+            cursor = cr.query(MyNavigationUtil.MY_NAVIGATION_URI,
+                    new String[] {MyNavigationUtil.ID}, "url = ?", new String[] {itemUrl}, null);
+            if (null != cursor && cursor.moveToFirst()) {
+                Uri uri = ContentUris.withAppendedId(MyNavigationUtil.MY_NAVIGATION_URI, cursor.getLong(0));
+                
+                ContentValues values = new ContentValues();
+                values.put(MyNavigationUtil.TITLE, "");
+                values.put(MyNavigationUtil.URL, "ae://" + cursor.getLong(0) + "add-fav");
+                values.put(MyNavigationUtil.WEBSITE, 0 + "");
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                Bitmap bm = BitmapFactory.decodeResource(this.getContext().getResources(),
+                        R.raw.my_navigation_add);
+                bm.compress(Bitmap.CompressFormat.PNG, 100, os);
+                values.put(MyNavigationUtil.THUMBNAIL, os.toByteArray());
+                Log.d(LOGTAG, "Controller deleteMyNavigationItem uri is : " + uri);
+                cr.update(uri, values, null, null);
+            } else {
+                Log.e(LOGTAG, "deleteMyNavigationItem the item does not exist!");
+            }
+        } catch (IllegalStateException e) {
+            Log.e(LOGTAG, "deleteMyNavigationItem", e);
+        } finally {
+            if (null != cursor) {
+                cursor.close();
+            }
+        }
+
+        if (getCurrentTopWebView() != null) {
+            getCurrentTopWebView().reload();
+        }
+    }
+    
+    private String getNameFromUrl(String itemUrl) {
+        ContentResolver cr = this.getContext().getContentResolver();
+        Cursor cursor = null;
+        String name = null;
+
+        try {
+            cursor = cr.query(MyNavigationUtil.MY_NAVIGATION_URI,
+                    new String[] {MyNavigationUtil.TITLE}, "url = ?", new String[] {itemUrl}, null);
+            if (null != cursor && cursor.moveToFirst()) {
+                name = cursor.getString(0);
+            } else {
+                Log.e(LOGTAG, "this item does not exist!");
+            }
+        } catch (IllegalStateException e) {
+            Log.e(LOGTAG, "getNameFromUrl", e);
+        } finally {
+            if (null != cursor) {
+                cursor.close();
+            }
+        }
+        return name;
+    }
+    
+    private void updateMyNavigationThumbnail(final String itemUrl, WebView webView) {
+        int width = mActivity.getResources().getDimensionPixelOffset(R.dimen.myNavigationThumbnailWidth);
+        int height = mActivity.getResources().getDimensionPixelOffset(R.dimen.myNavigationThumbnailHeight);
+        
+        final Bitmap bm = createScreenshot(webView, width, height);
+        
+        if (bm == null) {
+            Log.e(LOGTAG, "updateMyNavigationThumbnail bm is null!");
+            return;
+        }
+
+        final ContentResolver cr = mActivity.getContentResolver();
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... unused) {
+                ContentResolver cr = mActivity.getContentResolver();
+                Cursor cursor = null;
+                try {
+                    cursor = cr.query(MyNavigationUtil.MY_NAVIGATION_URI,
+                            new String[] {MyNavigationUtil.ID}, "url = ?", new String[] {itemUrl}, null);
+                    if (null != cursor && cursor.moveToFirst()) {
+                        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        bm.compress(Bitmap.CompressFormat.PNG, 100, os);
+
+                        ContentValues values = new ContentValues();
+                        values.put(MyNavigationUtil.THUMBNAIL, os.toByteArray());
+                        Uri uri = ContentUris.withAppendedId(MyNavigationUtil.MY_NAVIGATION_URI, cursor.getLong(0));
+                        Log.d(LOGTAG, "updateMyNavigationThumbnail uri is " + uri);
+                        cr.update(uri, values, null, null);
+                        os.close();
+                    }
+                } catch (IllegalStateException e) {
+                    Log.e(LOGTAG, "updateMyNavigationThumbnail", e);
+                } catch (IOException e) {
+                    Log.e(LOGTAG, "updateMyNavigationThumbnail", e);
+                } finally {
+                    if (null != cursor) {
+                        cursor.close();
+                    }
+                }
+                return null;
+            }
+        }.execute();
+    } 
+
+    //-----add for cmcc test my navigation end-----
 
     /**
      * As the menu can be open when loading state changes
@@ -2110,7 +2351,8 @@ public class Controller
         canvas.setBitmap(null);
         return ret;
     }
-
+    	
+    //-----modified for cmcc test my navigation start-----
     private void updateScreenshot(Tab tab) {
         // If this is a bookmarked site, add a screenshot to the database.
         // FIXME: Would like to make sure there is actually something to
@@ -2124,10 +2366,16 @@ public class Controller
         }
         final String url = tab.getUrl();
         final String originalUrl = view.getOriginalUrl();
+
+        final String thumbnailUrl = mUpdateMNThumbnailUrl;
         if (TextUtils.isEmpty(url)) {
             return;
         }
-
+        //update My Navigation Thumbnails
+        boolean isMyNavigationUrl = MyNavigationUtil.isMyNavigationUrl(mActivity, url);
+        if (isMyNavigationUrl) {
+            updateMyNavigationThumbnail(url, view);
+        }
         // Only update thumbnails for web urls (http(s)://), not for
         // about:, javascript:, data:, etc...
         // Unless it is a bookmarked site, then always update
@@ -2135,6 +2383,22 @@ public class Controller
             return;
         }
 
+        if (url != null && mUpdateMNThumbnailUrl != null 
+                && Patterns.WEB_URL.matcher(url).matches()
+                && Patterns.WEB_URL.matcher(mUpdateMNThumbnailUrl).matches()) {
+            String urlHost = (new WebAddress(url)).getHost();
+            String bookmarkHost = (new WebAddress(mUpdateMNThumbnailUrl)).getHost();
+            if (urlHost == null || urlHost.length() == 0 || bookmarkHost == null || bookmarkHost.length() == 0) {
+                return;
+            }
+            String urlDomain = urlHost.substring(urlHost.indexOf('.'), urlHost.length());
+            String bookmarkDomain = bookmarkHost.substring(bookmarkHost.indexOf('.'), bookmarkHost.length());
+            Log.d(LOGTAG, "addressUrl domain is  " + urlDomain);
+            Log.d(LOGTAG, "bookmarkUrl domain is " + bookmarkDomain);
+            if (!bookmarkDomain.equals(urlDomain)) {
+                return;
+            }
+        }
         final Bitmap bm = createScreenshot(view, getDesiredThumbnailWidth(mActivity),
                 getDesiredThumbnailHeight(mActivity));
         if (bm == null) {
@@ -2148,7 +2412,13 @@ public class Controller
                 Cursor cursor = null;
                 try {
                     // TODO: Clean this up
-                    cursor = Bookmarks.queryCombinedForUrl(cr, originalUrl, url);
+                    //cursor = Bookmarks.queryCombinedForUrl(cr, originalUrl, url);
+                   cursor = Bookmarks.queryCombinedForUrl(cr, originalUrl, 
+                            mUpdateMNThumbnail ? ((thumbnailUrl != null) ? thumbnailUrl : url) : url);
+                    if (mUpdateMNThumbnail) {
+                        mUpdateMNThumbnail = false;
+                        mUpdateMNThumbnailUrl = null;
+                    }
                     if (cursor != null && cursor.moveToFirst()) {
                         final ByteArrayOutputStream os =
                                 new ByteArrayOutputStream();
@@ -2175,6 +2445,8 @@ public class Controller
             }
         }.execute();
     }
+
+    //-----modified for cmcc test my navigation end-----
 
     private class Copy implements OnMenuItemClickListener {
         private CharSequence mText;

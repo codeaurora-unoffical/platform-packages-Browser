@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent" 
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<LinearLayout
+		android:layout_width="match_parent" 
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall" >
+		<TextView
+            android:id="@+id/dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_navigation_edit_title"
+            android:background="?android:attr/selectableItemBackground"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_vertical" />
+            
+	</LinearLayout>
+
+    
+            
+    <ScrollView android:layout_width="match_parent"
+            android:layout_height="0dip"
+        android:layout_weight="1" >
+        <TableLayout android:id="@+id/default_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="1"
+                        android:shrinkColumns="1"
+                        android:paddingTop="10dip"
+                        android:paddingLeft="10dip"
+                        android:paddingRight="10dip" >
+            <TableRow android:layout_marginBottom="10dip">
+                <TextView android:id="@+id/titleText"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:paddingTop="10dip"
+                    android:text="@string/my_navigation_name"
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText android:id="@+id/title"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:inputType="textCapSentences"
+                    android:layout_marginLeft="10dip"
+                    android:selectAllOnFocus="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+
+            <TableRow
+                android:layout_marginBottom="10dip"
+                android:id="@+id/row_address">
+                <TextView android:id="@+id/addressText"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/my_navigation_address"
+                    android:gravity="left"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText android:id="@+id/address"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:hint="@string/http"
+                    android:inputType="textUri"
+                    android:selectAllOnFocus="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64px"
+        android:orientation="vertical">
+        
+         <View android:id="@+id/add_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="?android:attr/dividerVertical"
+            />
+            
+		<LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        style="?android:attr/buttonBarStyle">
+	       
+	        <Button android:id="@+id/cancel"
+	            android:text="@string/do_not_save"
+	            android:layout_width="0dip"
+	            android:layout_gravity="right"
+	            android:layout_weight="1"
+	            android:maxLines="2"
+	            android:layout_height="wrap_content"
+	            style="?android:attr/buttonBarButtonStyle" />
+	        <Button android:id="@+id/OK"
+	            android:text="@string/save"
+	            android:layout_width="0dip"
+	            android:layout_gravity="left"
+	            android:layout_weight="1"
+	            android:maxLines="2"
+	            android:layout_height="wrap_content"
+	            style="?android:attr/buttonBarButtonStyle" />
+	    </LinearLayout>
+    </LinearLayout>
+ 
+</LinearLayout>

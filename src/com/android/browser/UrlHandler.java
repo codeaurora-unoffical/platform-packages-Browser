@@ -100,7 +100,13 @@ public class UrlHandler {
         if (url.startsWith("about:")) {
             return false;
         }
-
+        //-----add for cmcc test my navigation start----- 
+        //url like "ae://....add-fav" is default my navigation website,  
+        if (url.startsWith("ae://") && url.endsWith("add-fav")) {
+            mController.startAddMyNavigation(url);
+            return true; 
+        }
+        //-----add for cmcc test my navigation end-----
         // If this is a Google search, attempt to add an RLZ string
         // (if one isn't already present).
         if (rlzProviderPresent()) {
