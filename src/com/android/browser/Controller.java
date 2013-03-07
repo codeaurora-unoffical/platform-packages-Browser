@@ -17,6 +17,7 @@
 package com.android.browser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -215,7 +216,7 @@ public class Controller
     // Checks to see when the bookmarks database has changed, and updates the
     // Tabs' notion of whether they represent bookmarked sites.
     private ContentObserver mBookmarksObserver;
-    private CrashRecoveryHandler mCrashRecoveryHandler;
+    private static  CrashRecoveryHandler mCrashRecoveryHandler;
 
     private boolean mBlockEvents;
 
@@ -1628,6 +1629,9 @@ public class Controller
                 }
                 closeCurrentTab();
                 break;
+            case R.id.exit_menu_id:
+				showCloseSelectionDialog(mActivity);  
+                break;
 
             case R.id.homepage_menu_id:
                 Tab current = mTabControl.getCurrentTab();
@@ -1809,6 +1813,26 @@ public class Controller
         t.loadUrl(t.getUrl(), null);
     }
 
+    public static void showCloseSelectionDialog(final Activity activity){
+        new AlertDialog.Builder(activity)
+        .setTitle(R.string.exit_browser_title)
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setMessage(R.string.exit_browser_msg)               
+        .setNegativeButton(R.string.exit_minimize, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    activity.moveTaskToBack(true);
+                    dialog.dismiss();
+            }})              
+        .setPositiveButton(R.string.exit_quit, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    activity.finish();
+                    mCrashRecoveryHandler.clearState();
+                    int pid = android.os.Process.myPid();
+                    android.os.Process.killProcess(pid);
+                    dialog.dismiss();
+            }})
+        .show();
+    }
     @Override
     public void showPageInfo() {
         mPageDialogsHandler.showPageInfo(mTabControl.getCurrentTab(), false, null);
@@ -2610,7 +2634,7 @@ public class Controller
              * root of the task. So we can use either true or false for
              * moveTaskToBack().
              */
-            mActivity.moveTaskToBack(true);
+           // mActivity.moveTaskToBack(true);
             return;
         }
         if (current.canGoBack()) {
@@ -2624,9 +2648,9 @@ public class Controller
                 // Now we close the other tab
                 closeTab(current);
             } else {
-                if ((current.getAppId() != null) || current.closeOnBack()) {
-                    closeCurrentTab(true);
-                }
+                //if ((current.getAppId() != null) || current.closeOnBack()) {
+                 //   closeCurrentTab(true);
+                //}
                 /*
                  * Instead of finishing the activity, simply push this to the back
                  * of the stack and let ActivityManager to choose the foreground
@@ -2634,7 +2658,8 @@ public class Controller
                  * root of the task. So we can use either true or false for
                  * moveTaskToBack().
                  */
-                mActivity.moveTaskToBack(true);
+                //mActivity.moveTaskToBack(true);
+                showCloseSelectionDialog(mActivity);
             }
         }
     }
