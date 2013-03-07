@@ -30,4 +30,6 @@
     <integer name="max_bookmark_columns">5</integer>
     <!-- The duration of the titlebar animation in millisecs -->
     <integer name="titlebar_animation_duration">200</integer>
+     <!--Max input length for bookmark title -->
+    <integer name="bookmark_title_maxlength">256</integer>
 </resources>
