@@ -64,6 +64,12 @@ import android.widget.Toast;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.provider.Browser;
+import android.net.Uri;
+import android.provider.BrowserContract;
+import com.android.browser.BrowserUtils;
 
 public class AddBookmarkPage extends Activity
         implements View.OnClickListener, TextView.OnEditorActionListener,
@@ -123,6 +129,10 @@ public class AddBookmarkPage extends Activity
     private FolderSpinnerAdapter mFolderAdapter;
     private Spinner mAccountSpinner;
     private ArrayAdapter<BookmarkAccount> mAccountAdapter;
+    //add for cmcc test have not same title or address bookmarks start 
+    private long mDuplicateId;
+    private Context mDuplicateContext;
+    //add for cmcc test have not same title or address bookmarks end
 
     private static class Folder {
         String Name;
@@ -256,9 +266,18 @@ public class AddBookmarkPage extends Activity
                     mSaveToHomeScreen = false;
                     switchToDefaultView(true);
                 }
-            } else if (save()) {
-                finish();
+            //modified for cmcc test have not same title or address bookmarks start 
+            } else {
+                if (mSaveToHomeScreen) {
+                    if (save()) {
+                        finish();
+                        return;
+                    }
+                } else {
+                    onSaveWithConfirm();
+                }
             }
+            //modified for cmcc test have not same title or address bookmarks start 
         } else if (v == mCancelButton) {
             if (mIsFolderNamerShowing) {
                 completeOrCancelFolderNaming(true);
@@ -844,6 +863,87 @@ public class AddBookmarkPage extends Activity
     /**
      * Parse the data entered in the dialog and post a message to update the bookmarks database.
      */
+    //add for cmcc test have not same title or address bookmarks start 
+    static void deleteDuplicateBookmark(final Context context, final long id) {
+
+        Uri uri = ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, id);
+        context.getContentResolver().delete(uri, null, null);  
+             
+    }
+
+    private void onSaveWithConfirm() {
+        String title = mTitle.getText().toString().trim();
+        String unfilteredUrl = UrlUtils.fixUrl(mAddress.getText().toString());
+        String url = unfilteredUrl.trim();
+        Long id = mMap.getLong(BrowserContract.Bookmarks._ID);
+        int mDuplicateCount;
+        final ContentResolver cr = getContentResolver();
+
+        Cursor cursor = cr.query(BrowserContract.Bookmarks.CONTENT_URI,
+                                 BookmarksLoader.PROJECTION,
+                                 "( title = ? OR url = ? ) AND parent = ?", 
+                                 new String[] { title, url, Long.toString(mCurrentFolder)}, 
+                                 null);
+        if (cursor == null) {
+            return;
+        }
+
+        mDuplicateCount = cursor.getCount();
+        if (mDuplicateCount <= 0) {
+            cursor.close();
+            if (save()) {
+                finish();
+                return;
+            } else {
+                return;
+            }
+        } else {
+            try {
+                while (cursor.moveToNext()) {
+                    mDuplicateId = cursor.getLong(BookmarksLoader.COLUMN_INDEX_ID); 
+                    mDuplicateContext = AddBookmarkPage.this;
+                }
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } finally {
+                if (cursor != null)
+                    cursor.close();
+            }        
+        }
+
+        if (mEditingExisting) {
+            if (mDuplicateCount == 1) {
+                if (mDuplicateId == id) {
+                    if (save()) {
+                        finish();
+                        return;
+                    } else {
+                        return;
+                    }
+                }
+            }
+        }
+
+        new AlertDialog.Builder(this)
+            .setTitle(getString(R.string.save_to_bookmarks_title))
+            .setMessage(getString(R.string.overwrite_bookmark_msg))
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (mDuplicateContext == null) {
+                        return;
+                    }
+                    
+                    deleteDuplicateBookmark(mDuplicateContext, mDuplicateId);
+
+                    if (save()) {
+                       finish();
+                    }
+                }
+            })
+            .show();
+    }
+    //add for cmcc test have not same title or address bookmarks end
     boolean save() {
         createHandler();
 
