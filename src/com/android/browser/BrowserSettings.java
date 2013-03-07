@@ -308,7 +308,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         if (ua != null) {
             settings.setUserAgentString(ua);
         } else {
-            settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+            //modified for cmcc and cu test about user agent string start
+            if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
+                settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
+                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT");
+            } else {
+                settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+                Log.e(LOGTAG,"setting user agent as null");
+            }
+            //modified for cmcc and cu test about user agent string end
         }
 
         boolean useInverted = useInvertedRendering();
@@ -582,7 +590,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         WebSettings settings = view.getSettings();
         if (mCustomUserAgents.get(settings) != null) {
             mCustomUserAgents.remove(settings);
-            settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+            //modified for cmcc and cu test about user agent string start
+            if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
+                settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
+                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT in toggleDesktopUseragent");
+            } else {
+                settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+                Log.e(LOGTAG,"setting user agent as null in toggleDesktopUseragent");
+            }
+            //modified for cmcc and cu test about user agent string end
         } else {
             mCustomUserAgents.put(settings, DESKTOP_USERAGENT);
             settings.setUserAgentString(DESKTOP_USERAGENT);
@@ -1027,5 +1043,20 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         mPrefs.edit()
             .putBoolean(KEY_LAST_RUN_PAUSED, isPaused)
             .apply();
+    }
+
+    //Custom User Agent by user
+    public void toggleCustomUseragent(WebView view, String useragent) {
+        if (view == null) {
+            return;
+        }
+        WebSettings settings = view.getSettings();
+        if (mCustomUserAgents.get(settings) != null) {
+            mCustomUserAgents.remove(settings);
+            settings.setUserAgentString(useragent);
+        } else {
+            mCustomUserAgents.put(settings, useragent);
+            settings.setUserAgentString(useragent);
+        }
     }
 }

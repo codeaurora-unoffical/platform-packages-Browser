@@ -33,6 +33,10 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import android.webkit.WebSettings;
+import android.widget.Toast;
+import android.content.DialogInterface;
+import android.app.AlertDialog;
 /**
  *
  */
@@ -98,7 +102,8 @@ public class UrlHandler {
         // The "about:" schemes are internal to the browser; don't want these to
         // be dispatched to other apps.
         if (url.startsWith("about:")) {
-            return false;
+            //return false;
+	    return isChangeUserAgentCurrent(view, url);
         }
         //-----add for cmcc test my navigation start----- 
         //url like "ae://....add-fav" is default my navigation website,  
@@ -132,6 +137,32 @@ public class UrlHandler {
         return false;
     }
 
+    //add for changing userAgent by user start 
+    private final String USER_AGENT_DEBUG_PRE = "about:debug.ua=";
+    private boolean isChangeUserAgentCurrent(final WebView view, String url) {
+        if (url.startsWith(USER_AGENT_DEBUG_PRE)) {
+            final String userAgent = Uri.decode(url).substring(USER_AGENT_DEBUG_PRE.length());
+            Log.e("UrlHandler", "input url is" + url);
+            final String msg = "UserAgent String is " + userAgent ;
+            if (view != null) {
+                Log.e("UrlHandler", "user change userAgent is " + userAgent);
+                 new AlertDialog.Builder(mActivity)
+                    .setTitle("Set UA")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setMessage(msg)
+                    .setPositiveButton(R.string.ok, 
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                BrowserSettings.getInstance().toggleCustomUseragent(view, userAgent);                               
+                            }})                           
+                    .show();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    //add for changing userAgent by user end
     boolean startActivityForUrl(Tab tab, String url) {
       Intent intent;
       // perform generic parsing of the URI to turn it into an Intent.
