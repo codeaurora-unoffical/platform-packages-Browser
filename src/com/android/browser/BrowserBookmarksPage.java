@@ -38,6 +38,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BrowserContract;
 import android.provider.BrowserContract.Accounts;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;

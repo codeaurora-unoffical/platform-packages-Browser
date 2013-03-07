@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -54,7 +55,7 @@ import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.WeakHashMap;
-
+import com.qrd.plugin.feature_query.DefaultQuery;
 import android.util.Log;
 /**
  * Class for managing settings
@@ -156,6 +157,17 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         if (sInitialized) {
             syncSharedSettings();
         }
+         // add for cmcc test about landscape only start
+        if (mController.getActivity() != null) {
+            if (DefaultQuery.BROWSER_RES.equals("cmcc") && mPrefs.getBoolean(PREF_LANDSCAPEONLY, false)) {
+                Log.e(LOGTAG, "setController SCREEN_ORIENTATION_LANDSCAPE");
+                mController.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                Log.e(LOGTAG, "setController SCREEN_ORIENTATION_UNSPECIFIED");
+                mController.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            }        
+        }
+         // add for cmcc test about landscape only end
     }
 
     public void startManagingSettings(WebSettings settings) {
@@ -227,8 +239,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
                 }
                 mPrefs.edit().remove(PREF_TEXT_SIZE).apply();
             }
-
-            sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            //add for cmcc and cu test default homepage start 
+            if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cmcc);
+            } else if (DefaultQuery.BROWSER_RES.equals("cu")) {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cu);
+            } else {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            }
+            //add for cmcc and cu test default homepage end 
             if (sFactoryResetUrl.indexOf("{CID}") != -1) {
                 sFactoryResetUrl = sFactoryResetUrl.replace("{CID}",
                     BrowserProvider.getClientId(mContext.getContentResolver()));
@@ -284,6 +303,8 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         settings.setMediaPlaybackRequiresUserGesture(!videoPlayback());
 
         String ua = mCustomUserAgents.get(settings);
+        Log.e(LOGTAG,"before setting user agent ua is" + ua);
+        Log.e(LOGTAG,"before setting user agent DefaultQuery.BROWSER_USER_AGENT is" + DefaultQuery.BROWSER_USER_AGENT);
         if (ua != null) {
             settings.setUserAgentString(ua);
         } else {
@@ -388,6 +409,18 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             }
         } else if (PREF_LINK_PREFETCH.equals(key)) {
             updateConnectionType();
+        // add for cmcc test about landscape only start
+        } else if (mController.getActivity() != null 
+                   && DefaultQuery.BROWSER_RES.equals("cmcc") 
+                   && PREF_LANDSCAPEONLY.equals(key)) {
+            if (sharedPreferences.getBoolean(key, false) ) {
+                Log.e(LOGTAG, "SCREEN_ORIENTATION_LANDSCAPE");
+                mController.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else  {
+                Log.e(LOGTAG, "SCREEN_ORIENTATION_UNSPECIFIED");
+                mController.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            }
+        //add for cmcc test about landscape only end
         }
     }
 
@@ -661,7 +694,11 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     // -----------------------------
 
     public String getSearchEngineName() {
-        return mPrefs.getString(PREF_SEARCH_ENGINE, SearchEngine.GOOGLE);
+        if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
+            return mPrefs.getString(PREF_SEARCH_ENGINE, SearchEngine.BAIDU);
+        } else {
+            return mPrefs.getString(PREF_SEARCH_ENGINE, SearchEngine.GOOGLE);
+        }
     }
 
     public boolean allowAppTabs() {
@@ -689,7 +726,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     }
 
     public boolean loadPageInOverviewMode() {
-        return mPrefs.getBoolean(PREF_LOAD_PAGE, true);
+        return mPrefs.getBoolean(PREF_LOAD_PAGE, false);
     }
 
     public boolean autofitPages() {

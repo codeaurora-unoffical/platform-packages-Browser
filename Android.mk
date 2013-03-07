@@ -7,7 +7,8 @@ LOCAL_STATIC_JAVA_LIBRARIES := \
         android-common \
         guava \
         android-support-v13 \
-        android-support-v4 \
+        android-support-v4 
+LOCAL_JAVA_LIBRARIES := com.qrd.plugin.feature_query com.qrd.plugin.common_interface
 
 LOCAL_SRC_FILES := \
         $(call all-java-files-under, src) \

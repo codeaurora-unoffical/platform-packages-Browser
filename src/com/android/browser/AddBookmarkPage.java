@@ -638,9 +638,11 @@ public class AddBookmarkPage extends Activity
 
         mTitle = (EditText) findViewById(R.id.title);
         mTitle.setText(title);
+        BrowserUtils.lengthFilter2(AddBookmarkPage.this, mTitle, BrowserUtils.filenameMaxLength);
 
         mAddress = (EditText) findViewById(R.id.address);
         mAddress.setText(url);
+        BrowserUtils.lengthFilter2(AddBookmarkPage.this, mAddress, BrowserUtils.addressMaxLength);
 
         mButton = (TextView) findViewById(R.id.OK);
         mButton.setOnClickListener(this);
@@ -659,6 +661,10 @@ public class AddBookmarkPage extends Activity
         mFolderNamerHolder = getLayoutInflater().inflate(R.layout.new_folder_layout, null);
         mFolderNamer = (EditText) mFolderNamerHolder.findViewById(R.id.folder_namer);
         mFolderNamer.setOnEditorActionListener(this);
+
+        //add for cmcc test about waring limit of edit text
+        BrowserUtils.lengthFilter2(AddBookmarkPage.this, mFolderNamer, BrowserUtils.filenameMaxLength);
+
         mFolderCancel = mFolderNamerHolder.findViewById(R.id.close);
         mFolderCancel.setOnClickListener(this);
 
