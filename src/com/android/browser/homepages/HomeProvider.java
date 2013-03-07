@@ -90,11 +90,9 @@ public class HomeProvider extends ContentProvider {
             String url) {
         try {
             boolean useMostVisited = BrowserSettings.getInstance().useMostVisitedHomepage();
-            Log.e(LOGTAG, " shouldInterceptRequest url is" + url);
             if (MyNavigationUtil.MY_NAVIGATION.equals(url) 
                 ||(useMostVisited && url.startsWith("content://"))) {
                 Uri uri = Uri.parse(url);
-                Log.e(LOGTAG, " shouldInterceptRequest uri.getAuthority() is" + uri.getAuthority());
                 if (AUTHORITY.equals(uri.getAuthority()) || MyNavigationUtil.AUTHORITY.equals(uri.getAuthority())) {
                     InputStream ins = context.getContentResolver()
                             .openInputStream(uri);
