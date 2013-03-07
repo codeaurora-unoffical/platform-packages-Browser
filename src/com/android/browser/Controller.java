@@ -105,7 +105,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.net.wifi.WifiManager;
+import android.net.NetworkInfo;
+import android.net.ConnectivityManager;
 import com.qrd.plugin.feature_query.FeatureQuery;
+import android.content.SharedPreferences;
+import android.net.wifi.ScanResult;
+import android.app.ActivityManagerNative;
+import com.android.internal.telephony.TelephonyIntents;
+import android.telephony.TelephonyManager;
+import android.provider.Settings;
 /**
  * Controller for browser
  */
@@ -116,7 +125,17 @@ public class Controller
     private static final String SEND_APP_ID_EXTRA =
         "android.speech.extras.SEND_APPLICATION_ID_EXTRA";
     private static final String INCOGNITO_URI = "browser:incognito";
+    /**
+     * user will be notified when wifi is unavailable
+     * @hide
+     */
 
+    public static final String WIFI_BROWSER_INTERACTION_REMIND_TYPE = "wifi_browser_interaction_remind";
+    /**
+     * user will not be notified when wifi is unavailable
+     * @hide
+     */
+    public static final int WIFI_BROWSER_INTERACTION_REMIND_TYPE_CANCEL = 0;
 
     // public message ids
     public final static int LOAD_URL = 1001;
@@ -836,7 +855,52 @@ public class Controller
     boolean didUserStopLoading() {
         return mLoadStopped;
     }
+    //add for cmcc test about wlan start
+    private boolean isNetworkShouldNotify = true;
+    private void handleNetworkNotify(WebView view) {
+        ConnectivityManager conMgr = (ConnectivityManager)this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        WifiManager wifiMgr = (WifiManager) this.getContext().getSystemService(Context.WIFI_SERVICE);
 
+        if (wifiMgr.isWifiEnabled()) {
+            NetworkInfo mNetworkInfo = conMgr.getActiveNetworkInfo();
+
+            if (mNetworkInfo == null || (mNetworkInfo != null && (mNetworkInfo.getType() != ConnectivityManager.TYPE_WIFI))) {
+                List<ScanResult> list = wifiMgr.getScanResults();
+                if (list != null && list.size() == 0) {
+                    int isReminder = Settings.System.getInt(
+                                                           mActivity.getContentResolver(), 
+                                                           WIFI_BROWSER_INTERACTION_REMIND_TYPE, 
+                                                           WIFI_BROWSER_INTERACTION_REMIND_TYPE_CANCEL);
+
+                  if (isReminder == WIFI_BROWSER_INTERACTION_REMIND_TYPE_CANCEL) {
+                    Intent intent = new Intent("android.net.wifi.cmcc.WIFI_SELECTION_DATA_CONNECTION");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    this.getContext().startActivity(intent);
+                  }
+                } else {
+                    if (ActivityManagerNative.isSystemReady()) {
+                        try {
+                            Intent intent = new Intent("android.net.wifi.cmcc.PICK_WIFI_NETWORK_AND_GPRS");
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            this.getContext().startActivity(intent);
+                        } catch (Exception e) {
+                            String err_msg = this.getContext().getString(R.string.acivity_not_found, "android.net.wifi.cmcc.PICK_WIFI_NETWORK_AND_GPRS");
+                            Toast.makeText(this.getContext(), err_msg, Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Log.e(LOGTAG, "handleNetworkNotify() Error, ActivityManagerNative.isSystemReady return false.");
+                    }
+                }
+                isNetworkShouldNotify = false;
+            }
+        } else {
+            if (!mNetworkHandler.isNetworkUp()) {
+                view.setNetworkAvailable(false);
+                Log.v(LOGTAG, "handleNetworkNotify() Wlan is not enabled.");
+            }
+        }
+    }
+    //add for cmcc test about wlan end
     // WebViewController
 
     @Override
@@ -853,9 +917,22 @@ public class Controller
         CookieSyncManager.getInstance().resetSync();
 
         if (!mNetworkHandler.isNetworkUp()) {
-            view.setNetworkAvailable(false);
+            //add for cmcc test about wlan start
+            Log.d(LOGTAG, "onPageStarted() network unavailable");
+            if (FeatureQuery.FEATURE_WLAN_CMCC_SUPPORT && isNetworkShouldNotify) {
+                handleNetworkNotify(view);
+            } else {
+                view.setNetworkAvailable(false);
+            }
+            isNetworkShouldNotify = false;
+        } else {
+            Log.d(LOGTAG, "onPageStarted() network available");
+            if (FeatureQuery.FEATURE_WLAN_CMCC_SUPPORT && isNetworkShouldNotify) {
+                handleNetworkNotify(view);
+            }
+            isNetworkShouldNotify = false;
         }
-
+        //add for cmcc test about wlan  end
         // when BrowserActivity just starts, onPageStarted may be called before
         // onResume as it is triggered from onCreate. Call resumeWebViewTimers
         // to start the timer. As we won't switch tabs while an activity is in
