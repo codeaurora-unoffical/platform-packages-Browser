@@ -19,8 +19,9 @@ package com.android.browser.preferences;
 import com.android.browser.BrowserActivity;
 import com.android.browser.PreferenceKeys;
 import com.android.browser.R;
-
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -32,12 +33,18 @@ import android.webkit.GeolocationPermissions;
 import android.webkit.ValueCallback;
 import android.webkit.WebStorage;
 
+import com.android.browser.BrowserSettings;
+import com.android.browser.DownloadHandler;
+import com.android.browser.PreferenceKeys;
 import java.util.Map;
 import java.util.Set;
+import android.net.Uri;
+import android.widget.Toast;
 
 public class AdvancedPreferencesFragment extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
 
+    private static final int DOWNLOAD_PATH_RESULT_CODE = 1;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +75,64 @@ public class AdvancedPreferencesFragment extends PreferenceFragment
         e = findPreference(PreferenceKeys.PREF_PLUGIN_STATE);
         e.setOnPreferenceChangeListener(this);
         updateListPreferenceSummary((ListPreference) e);
+        onInitdownloadSettingsPreference();
+    }
+
+
+    private void onInitdownloadSettingsPreference() {
+        addPreferencesFromResource(R.xml.download_settings_preferences);
+        PreferenceScreen downloadPathSettings = (PreferenceScreen) findPreference(PreferenceKeys.PREF_DOWNLOAD_PATH_SETTINGS);
+        downloadPathSettings.setOnPreferenceClickListener(onClickDownloadPathSettings());
+
+        String downloadPath = downloadPathSettings.getSharedPreferences().
+                             getString(PreferenceKeys.PREF_DOWNLOAD_PATH_SETTINGS, 
+                                       BrowserSettings.getInstance().getDownloadPathFromSettings());
+                String downloadPathForUser = DownloadHandler.getDownloadPathForUser(this.getActivity(), downloadPath);
+        downloadPathSettings.setSummary(downloadPathForUser);
+    }
+
+
+    private Preference.OnPreferenceClickListener onClickDownloadPathSettings() {
+        return new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+                    Intent i = new Intent("android.filemanager.action.GET_FOLDER");
+                    i.putExtra( "can_create_dir", true );
+                    i.putExtra( "ok_text", getResources().getString(R.string.ok));    
+                    AdvancedPreferencesFragment.this.startActivityForResult(i, DOWNLOAD_PATH_RESULT_CODE);
+                } catch (Exception e) {
+                    String err_msg = getResources().getString(R.string.acivity_not_found, "android.filemanager.action.GET_FOLDER");
+                    Toast.makeText(getActivity(), err_msg, Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+        };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == DOWNLOAD_PATH_RESULT_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                String downloadPath = null;
+                Uri uri = data.getData();   
+                if (uri != null) {
+                    downloadPath= uri.getPath();
+                }
+                if (downloadPath != null) {
+                    PreferenceScreen downloadPathSettings = (PreferenceScreen)findPreference(PreferenceKeys.PREF_DOWNLOAD_PATH_SETTINGS);
+                    Editor editor = downloadPathSettings.getEditor();
+                    editor.putString(PreferenceKeys.PREF_DOWNLOAD_PATH_SETTINGS, downloadPath);
+                    editor.apply();
+                    String downloadPathForUser = DownloadHandler.getDownloadPathForUser(this.getActivity(), downloadPath);
+                    downloadPathSettings.setSummary(downloadPathForUser);
+                }
+
+                return;
+            }
+        }
+        return;
     }
 
     void updateListPreferenceSummary(ListPreference e) {
