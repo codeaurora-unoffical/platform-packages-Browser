@@ -418,7 +418,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         } else if (PREF_LINK_PREFETCH.equals(key)) {
             updateConnectionType();
         // add for cmcc test about landscape only start
-        } else if (mController.getActivity() != null 
+        } else if (mController!=null&&mController.getActivity() != null 
                    && DefaultQuery.BROWSER_RES.equals("cmcc") 
                    && PREF_LANDSCAPEONLY.equals(key)) {
             if (sharedPreferences.getBoolean(key, false) ) {
