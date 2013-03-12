@@ -217,7 +217,7 @@ public class DownloadHandler {
             // are not sure of the mimetype in this case, so do a head request
             new FetchUrlMimeTypeAndContentLength(activity, url, userAgent, referer, privateBrowsing, filename).start();
         } else {
-            startDownloadSettings(activity, url, userAgent, contentDisposition, referer, mimetype, privateBrowsing, contentLength, filename);
+            startDownloadSettings(activity, url, userAgent, contentDisposition,  mimetype, referer, privateBrowsing, contentLength, filename);
         }
     }
 
