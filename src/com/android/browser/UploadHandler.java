@@ -254,8 +254,8 @@ public class UploadHandler {
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.setType("*/*");
 
-        Intent chooser = createChooserIntent(createCameraIntent(), createCamcorderIntent(),
-                /*createSoundRecorderIntent(), */createFileManagerIntent());
+        Intent chooser = createChooserIntent(createCameraIntent(), createCamcorderIntent()
+                /*createSoundRecorderIntent(), */);
         chooser.putExtra(Intent.EXTRA_INTENT, i);
         return chooser;
     }
@@ -295,12 +295,6 @@ public class UploadHandler {
 
     private Intent createSoundRecorderIntent() {
         return new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-    }
-
-    private Intent createFileManagerIntent() {
-        Intent fileManagerIntent = new Intent("android.filemanager.action.GET_FILE");
-        fileManagerIntent.putExtra("file_type", "*");
-        return fileManagerIntent;
     }
 
 }

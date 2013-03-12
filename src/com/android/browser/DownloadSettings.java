@@ -127,12 +127,10 @@ public class DownloadSettings extends Activity {
 
             //start filemanager for getting download path
             try {
-                Intent downloadPathIntent = new Intent("android.filemanager.action.GET_FOLDER");
-                downloadPathIntent.putExtra( "can_create_dir", true );
-                downloadPathIntent.putExtra( "ok_text", getResources().getString(R.string.ok));       
+                Intent downloadPathIntent = new Intent("com.android.fileexplorer.action.DIR_SEL");
                 DownloadSettings.this.startActivityForResult(downloadPathIntent, DOWNLOAD_PATH);
             } catch (Exception e) {
-                String err_msg = getString(R.string.acivity_not_found, "android.filemanager.action.GET_FOLDER");
+                String err_msg = getString(R.string.acivity_not_found, "com.android.fileexplorer.action.DIR_SEL");
                 Toast.makeText(DownloadSettings.this , err_msg, Toast.LENGTH_LONG).show();
             }
 
@@ -213,11 +211,9 @@ public class DownloadSettings extends Activity {
 
         Log.e(LOGTAG,"----------isSelectPath----------"+ isSelectPath);
         if (DOWNLOAD_PATH == requestCode) {
-            Uri uri = null;
             if (resultCode == Activity.RESULT_OK && intent != null) {
-                uri = intent.getData();    
-                if (uri != null) {
-                    downloadPath = uri.getPath();
+                downloadPath = intent.getStringExtra("result_dir_sel");   
+                if (downloadPath != null) {
                     downloadPathForUser = DownloadHandler.getDownloadPathForUser(DownloadSettings.this, downloadPath);
                     setDownloadPathForUserText(downloadPathForUser);
                     Log.e(LOGTAG,"----------downloadPath----------"+ downloadPath);

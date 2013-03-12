@@ -102,12 +102,10 @@ public class AdvancedPreferencesFragment extends PreferenceFragment
         return new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 try {
-                    Intent i = new Intent("android.filemanager.action.GET_FOLDER");
-                    i.putExtra( "can_create_dir", true );
-                    i.putExtra( "ok_text", getResources().getString(R.string.ok));    
+                    Intent i = new Intent("com.android.fileexplorer.action.DIR_SEL");
                     AdvancedPreferencesFragment.this.startActivityForResult(i, DOWNLOAD_PATH_RESULT_CODE);
                 } catch (Exception e) {
-                    String err_msg = getResources().getString(R.string.acivity_not_found, "android.filemanager.action.GET_FOLDER");
+                    String err_msg = getResources().getString(R.string.acivity_not_found, "com.android.fileexplorer.action.DIR_SEL");
                     Toast.makeText(getActivity(), err_msg, Toast.LENGTH_LONG).show();
                 }
                 return true;
@@ -121,11 +119,7 @@ public class AdvancedPreferencesFragment extends PreferenceFragment
 
         if (requestCode == DOWNLOAD_PATH_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
-                String downloadPath = null;
-                Uri uri = data.getData();   
-                if (uri != null) {
-                    downloadPath= uri.getPath();
-                }
+                String downloadPath = data.getStringExtra("result_dir_sel");
                 if (downloadPath != null) {
                     PreferenceScreen downloadPathSettings = (PreferenceScreen)findPreference(PreferenceKeys.PREF_DOWNLOAD_PATH_SETTINGS);
                     Editor editor = downloadPathSettings.getEditor();
