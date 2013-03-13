@@ -233,6 +233,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         matcher.addURI(authority, "thumbnails", THUMBNAILS);
         matcher.addURI(authority, "thumbnails/#", THUMBNAILS_ID);
         matcher.addURI(authority, "omnibox_suggestions", OMNIBOX_SUGGESTIONS);
+        matcher.addURI(authority, "homepage", HOMEPAGE);
 
         // Legacy
         matcher.addURI(LEGACY_AUTHORITY, "searches", SEARCHES);
@@ -1773,7 +1774,10 @@ public class BrowserProvider2 extends SQLiteContentProvider {
             case HOMEPAGE:
                 if (null != values) {
                     String homepage = values.getAsString("homepage");
-                    if (null != homepage) {  
+                    if (null != homepage) { 
+                        if (BrowserSettings.getInstance() == null) {
+                            BrowserSettings.initialize(getContext());
+                        }
                         BrowserSettings.getInstance().setHomePage(homepage);
                         Log.d(LOGTAG,"set home page for DM");
                         return 1; 
