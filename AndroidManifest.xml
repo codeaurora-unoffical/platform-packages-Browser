@@ -49,6 +49,7 @@
     <uses-permission android:name="com.android.browser.permission.READ_HOMEPAGE" />
     <uses-permission android:name="com.android.browser.permission.WRITE_HOMEPAGE" />
     <uses-permission android:name="android.permission.CALL_PRIVILEGED"/>
+    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
 
     <application   android:name="Browser"
                    android:label="@string/application_name"

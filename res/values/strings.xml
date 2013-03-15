@@ -1080,7 +1080,7 @@
     <string name="download_filepath_label">Path</string>
     <string name="download_edit_filename_label">Name</string>
     <string name="download_default_path">default</string>
-    <string name="default_savepath_name">/Downdowns</string>
+    <string name="default_savepath_name">/Download</string>
     <string name="download_no_enough_memory">Download no enough memory</string>
     <string name="download_settings_title">Download Settings</string>
     <string name="save_page_needs_title">Download File Name is Empty!</string>

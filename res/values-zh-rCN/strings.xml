@@ -423,7 +423,6 @@
     <string name="download_filepath_label">路径</string>
     <string name="download_edit_filename_label">名称</string>
     <string name="download_default_path">default</string>
-    <string name="default_savepath_name">/下载</string>
     <string name="download_no_enough_memory">存储空间不足</string>
     <string name="download_settings_title">下载设置</string>
     <string name="save_page_needs_title">文件名称不能为空!</string>
