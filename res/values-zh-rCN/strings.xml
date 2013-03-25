@@ -441,5 +441,7 @@
     <!-- add for override duplicate bookmark -->
     <string name="save_to_bookmarks_title">保存书签</string>
     <string name="overwrite_bookmark_msg">该书签的标签或者地址已经存在，是否覆盖？</string>
+    <!-- Upload drm file is unsupported -->
+    <string name="drm_file_unsupported">不支持Drm文件上传!</string>
     <string name="acivity_not_found">没有找到处理 Intent <xliff:g id="NOACTIVITY">%s</xliff:g> 的Activity.</string>
 </resources>

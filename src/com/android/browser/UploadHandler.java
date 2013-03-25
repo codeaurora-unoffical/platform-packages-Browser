@@ -22,11 +22,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.webkit.ValueCallback;
 import android.widget.Toast;
 
 import java.io.File;
 import java.util.Vector;
+import android.database.Cursor;
+import com.qrd.plugin.feature_query.FeatureQuery;
 
 /**
  * Handle the file upload callbacks from WebView here
@@ -54,6 +57,36 @@ public class UploadHandler {
 
     boolean handled() {
         return mHandled;
+    }
+
+    private boolean isDrmFileUpload(Uri uri){
+        if (uri == null)
+            return false;
+        String path = null;
+        String scheme = uri.getScheme();
+        if ("content".equals(scheme)){
+            String[] proj = null;
+            if (uri.toString().contains("/images/"))
+                proj = new String[]{MediaStore.Images.Media.DATA};
+            else if (uri.toString().contains("/audio/"))
+                proj = new String[]{MediaStore.Audio.Media.DATA};
+            else if (uri.toString().contains("/video/"))
+                proj = new String[]{MediaStore.Video.Media.DATA};
+            Cursor cursor = mController.getActivity().managedQuery(uri,proj,null,null,null);
+            if (cursor != null && cursor.moveToFirst() && proj != null){
+                path = cursor.getString(0);
+            }
+        }
+        else if ("file".equals(scheme)){
+             path = uri.toString().replace("file://","");
+        }
+        if (path != null){
+            if (path.endsWith(".fl")||path.endsWith(".dm")||path.endsWith(".dcf")||path.endsWith(".dr") || path.endsWith(".dd")){
+                Toast.makeText(mController.getContext(), R.string.drm_file_unsupported, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        }
+        return false;
     }
 
     void onResult(int resultCode, Intent intent) {
@@ -85,7 +118,11 @@ public class UploadHandler {
             }
         }
 
-        mUploadMessage.onReceiveValue(result);
+        if (FeatureQuery.FEATURE_BROWSER_DRM_UPLOAD_UNSUPPORT && isDrmFileUpload(result)) {
+            mUploadMessage.onReceiveValue(null);
+        } else {
+            mUploadMessage.onReceiveValue(result);
+        }
         mHandled = true;
         mCaughtActivityNotFoundException = false;
     }
@@ -217,8 +254,8 @@ public class UploadHandler {
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.setType("*/*");
 
-        Intent chooser = createChooserIntent(createCameraIntent(), createCamcorderIntent(),
-                createSoundRecorderIntent());
+        Intent chooser = createChooserIntent(createCameraIntent(), createCamcorderIntent()
+                /*createSoundRecorderIntent(), */);
         chooser.putExtra(Intent.EXTRA_INTENT, i);
         return chooser;
     }
