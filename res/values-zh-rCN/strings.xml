@@ -301,7 +301,7 @@
     <string name="clear_history" msgid="5998307092715979619">"清除历史记录"</string>
     <string name="browser_history" msgid="2979476257919939232">"最近访问过的网页"</string>
     <string name="empty_history" msgid="7013369425484218985">"没有浏览器历史记录。"</string>
-    <string name="go_home" msgid="109129207276086793">"首页"</string>
+    <string name="go_home" msgid="109129207276086793">"转至主页"</string>
     <string name="add_new_bookmark" msgid="3158497555612337238">"添加书签"</string>
     <string name="add_bookmark_short" msgid="3783984330998103735">"添加"</string>
     <string name="search_hint" msgid="4647356319916631820">"搜索或输入网址"</string>
@@ -398,4 +398,12 @@
     <string name="accessibility_state_frozen" msgid="8041539250447035570">"已保存的网页"</string>
     <string name="accessibility_transition_navscreen" msgid="2734915619351519547">"标签页管理"</string>
     <string name="accessibility_button_bookmarks_folder_up" msgid="9179389954714270505">"上一个文件夹"</string>
+    <!-- add for exit option menu operation -->
+    <string name="exit_item">退出</string>
+    <string name="exit_browser_title">退出方式选择</string>
+    <string name="exit_browser_msg">请选择退出浏览器的方式？</string>
+    <string name="exit_minimize">最小化</string>
+    <string name="exit_quit">退出</string>
+    <string name="save_bookmark_folder">新建书签文件夹</string>
+    <string name="menu_bookmarks_history">书签/历史记录</string>
 </resources>
