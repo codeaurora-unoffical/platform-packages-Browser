@@ -44,6 +44,7 @@ import com.android.browser.search.SearchEngines;
 import com.android.internal.R;
 
 import java.util.List;
+import com.android.browser.BrowserUtils;
 
 /**
  * url/search input view
@@ -112,6 +113,8 @@ public class UrlInputView extends AutoCompleteTextView
         addTextChangedListener(this);
 
         mState = StateListener.STATE_NORMAL;
+
+        BrowserUtils.lengthFilter2(ctx, UrlInputView.this, BrowserUtils.addressMaxLength);
     }
 
     protected void onFocusChanged(boolean focused, int direction, Rect prevRect) {

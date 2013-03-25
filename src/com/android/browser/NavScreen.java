@@ -156,12 +156,15 @@ public class NavScreen extends RelativeLayout
     }
 
     private void onCloseTab(Tab tab) {
-        if (tab != null) {
+        int tabSize = mUiController.getTabControl().getTabCount();
+        if (tabSize >1 && tab != null) {
             if (tab == mUiController.getCurrentTab()) {
                 mUiController.closeCurrentTab();
             } else {
                 mUiController.closeTab(tab);
             }
+        } else if (tabSize == 1) {
+            Controller.showCloseSelectionDialog(mActivity);
         }
     }
 

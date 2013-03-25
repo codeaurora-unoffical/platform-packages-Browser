@@ -239,8 +239,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
                 }
                 mPrefs.edit().remove(PREF_TEXT_SIZE).apply();
             }
-
-            sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            //add for cmcc and cu test default homepage start 
+            if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cmcc);
+            } else if (DefaultQuery.BROWSER_RES.equals("cu")) {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cu);
+            } else {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            }
+            //add for cmcc and cu test default homepage end 
             if (sFactoryResetUrl.indexOf("{CID}") != -1) {
                 sFactoryResetUrl = sFactoryResetUrl.replace("{CID}",
                     BrowserProvider.getClientId(mContext.getContentResolver()));
@@ -296,10 +303,20 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         settings.setMediaPlaybackRequiresUserGesture(!videoPlayback());
 
         String ua = mCustomUserAgents.get(settings);
+        Log.e(LOGTAG,"before setting user agent ua is" + ua);
+        Log.e(LOGTAG,"before setting user agent DefaultQuery.BROWSER_USER_AGENT is" + DefaultQuery.BROWSER_USER_AGENT);
         if (ua != null) {
             settings.setUserAgentString(ua);
         } else {
-            settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+            //modified for cmcc and cu test about user agent string start
+            if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
+                settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
+                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT");
+            } else {
+                settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+                Log.e(LOGTAG,"setting user agent as null");
+            }
+            //modified for cmcc and cu test about user agent string end
         }
 
         boolean useInverted = useInvertedRendering();
@@ -573,7 +590,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         WebSettings settings = view.getSettings();
         if (mCustomUserAgents.get(settings) != null) {
             mCustomUserAgents.remove(settings);
-            settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+            //modified for cmcc and cu test about user agent string start
+            if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
+                settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
+                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT in toggleDesktopUseragent");
+            } else {
+                settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+                Log.e(LOGTAG,"setting user agent as null in toggleDesktopUseragent");
+            }
+            //modified for cmcc and cu test about user agent string end
         } else {
             mCustomUserAgents.put(settings, DESKTOP_USERAGENT);
             settings.setUserAgentString(DESKTOP_USERAGENT);
@@ -717,7 +742,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     }
 
     public boolean loadPageInOverviewMode() {
-        return mPrefs.getBoolean(PREF_LOAD_PAGE, true);
+        return mPrefs.getBoolean(PREF_LOAD_PAGE, false);
     }
 
     public boolean autofitPages() {
@@ -740,7 +765,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         return mPrefs.getString(PREF_DEFAULT_TEXT_ENCODING, null);
     }
     
-    public String getDownloadPathFromSettings() {
+	public String getDownloadPathFromSettings() {
         return mPrefs.getString(PREF_DOWNLOAD_PATH_SETTINGS, DownloadHandler.getDefaultDownloadPath(mContext));
     }
     
@@ -1018,5 +1043,20 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         mPrefs.edit()
             .putBoolean(KEY_LAST_RUN_PAUSED, isPaused)
             .apply();
+    }
+
+    //Custom User Agent by user
+    public void toggleCustomUseragent(WebView view, String useragent) {
+        if (view == null) {
+            return;
+        }
+        WebSettings settings = view.getSettings();
+        if (mCustomUserAgents.get(settings) != null) {
+            mCustomUserAgents.remove(settings);
+            settings.setUserAgentString(useragent);
+        } else {
+            mCustomUserAgents.put(settings, useragent);
+            settings.setUserAgentString(useragent);
+        }
     }
 }
