@@ -855,6 +855,7 @@ public class Controller
     boolean didUserStopLoading() {
         return mLoadStopped;
     }
+
     //add for cmcc test about wlan start
     private boolean isNetworkShouldNotify = true;
     private void handleNetworkNotify(WebView view) {
@@ -872,11 +873,11 @@ public class Controller
                                                            WIFI_BROWSER_INTERACTION_REMIND_TYPE, 
                                                            WIFI_BROWSER_INTERACTION_REMIND_TYPE_CANCEL);
 
-                  if (isReminder == WIFI_BROWSER_INTERACTION_REMIND_TYPE_CANCEL) {
-                    Intent intent = new Intent("android.net.wifi.cmcc.WIFI_SELECTION_DATA_CONNECTION");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    this.getContext().startActivity(intent);
-                  }
+                    if (isReminder == WIFI_BROWSER_INTERACTION_REMIND_TYPE_CANCEL) {
+                        Intent intent = new Intent("android.net.wifi.cmcc.WIFI_SELECTION_DATA_CONNECTION");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        this.getContext().startActivity(intent);
+                    }
                 } else {
                     if (ActivityManagerNative.isSystemReady()) {
                         try {
