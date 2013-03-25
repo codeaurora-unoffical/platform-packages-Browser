@@ -1061,5 +1061,9 @@
     <string name="save_bookmark_folder">new folder</string>
     <!-- add for option menu Bookmarks/history -->
     <string name="menu_bookmarks_history">Bookmarks/History</string>
+
+    <!-- add for override duplicate bookmark -->
+    <string name="save_to_bookmarks_title">Save to Bookmarks</string>
+    <string name="overwrite_bookmark_msg">This bookmark\'s name or address already exists, overwrite it?</string>
     <string name="acivity_not_found">Activity Not Found to Handle Intent <xliff:g id="NOACTIVITY">%s</xliff:g>.</string>
 </resources>
