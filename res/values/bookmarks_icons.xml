@@ -30,4 +30,35 @@
         <item>@raw/favicon_bbc</item>
         <item>@raw/thumb_bbc</item>
     </array>
+
+    <array name="bookmark_preloads_cmcc">
+        <item>@raw/cmcc_favicon_mm</item>
+        <item>@raw/cmcc_thumb_mm</item>
+        <item>@raw/cmcc_favicon_cmread</item>
+        <item>@raw/cmcc_thumb_cmread</item>
+        <item>@raw/cmcc_favicon_10086_game</item>
+        <item>@raw/cmcc_thumb_game</item>
+        <item>@raw/cmcc_favicon_cmvideo</item>
+        <item>@raw/cmcc_thumb_cmvideo</item>
+        <item>@raw/cmcc_favicon_10086_music</item>
+        <item>@raw/cmcc_thumb_music</item>
+        <item>@raw/cmcc_favicon_12580</item>
+        <item>@raw/cmcc_thumb_12580</item>
+        <item>@raw/cmcc_favicon_fetion</item>
+        <item>@raw/cmcc_thumb_fetion</item>
+        <item>@raw/cmcc_favicon_139mail</item>
+        <item>@raw/cmcc_thumb_139mail</item>
+        <item>@raw/cmcc_favicon_webaddress</item>
+        <item>@raw/cmcc_thumb_webaddress</item>
+        <item>@raw/cmcc_favicon_10086_portal</item>
+        <item>@raw/cmcc_thumb_10086_portal</item>
+        <item>@raw/cmcc_favicon_10086_shop</item>
+        <item>@raw/cmcc_thumb_mobile_app</item>       
+        <item>@raw/cmcc_favicon_10086_mornternet</item>
+        <item>@raw/cmcc_thumb_monternet</item> 
+    </array>
+    <array name="bookmark_preloads_cu">
+        <item>@raw/cu_favicon_wo</item>
+        <item>@raw/cu_thumb_wo</item> 
+    </array>
 </resources>
