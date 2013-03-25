@@ -458,5 +458,8 @@
     <string name="overwrite_bookmark_msg">该书签的标签或者地址已经存在，是否覆盖？</string>
     <!-- Upload drm file is unsupported -->
     <string name="drm_file_unsupported">不支持Drm文件上传!</string>
+    <!-- add for landscape only control -->
+    <string name="pref_content_landscape_only">仅横屏横屏模式显示</string>
+    <string name="pref_content_landscape_only_summary">仅以横屏模式显示网页</string>
     <string name="acivity_not_found">没有找到处理 Intent <xliff:g id="NOACTIVITY">%s</xliff:g> 的Activity.</string>
 </resources>

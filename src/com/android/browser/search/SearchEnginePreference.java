@@ -28,6 +28,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import java.util.ArrayList;
+import com.qrd.plugin.feature_query.FeatureQuery;
 
 class SearchEnginePreference extends ListPreference {
 
@@ -41,7 +42,8 @@ class SearchEnginePreference extends ListPreference {
 
         SearchEngine defaultSearchEngine = SearchEngines.getDefaultSearchEngine(context);
         String defaultSearchEngineName = null;
-        if (defaultSearchEngine != null) {
+        //modified for cmcc test default search engine have no google 
+        if (FeatureQuery.FEATURE_BROWSER_SEARCH_ENGINE_DEFAULT && defaultSearchEngine != null) {
             defaultSearchEngineName = defaultSearchEngine.getName();
             entryValues.add(defaultSearchEngineName);
             entries.add(defaultSearchEngine.getLabel());

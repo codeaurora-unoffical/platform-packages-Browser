@@ -1118,5 +1118,8 @@
     <string name="overwrite_bookmark_msg">This bookmark\'s name or address already exists, overwrite it?</string>
     <!-- Upload drm file is unsupported -->
     <string name="drm_file_unsupported">Drm file is unsupported!</string>
+    <!-- add for landscape only control -->
+    <string name="pref_content_landscape_only">Landscape-only display</string>
+    <string name="pref_content_landscape_only_summary">Display pages only in the wider, landscape screen orientation</string>
     <string name="acivity_not_found">Activity Not Found to Handle Intent <xliff:g id="NOACTIVITY">%s</xliff:g>.</string>
 </resources>

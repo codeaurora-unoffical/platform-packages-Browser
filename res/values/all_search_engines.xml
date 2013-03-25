@@ -121,7 +121,15 @@ http://www.opensearch.org/Specifications/OpenSearch/1.1/Draft_4#OpenSearch_1.1_p
     <item>baidu.com</item>
     <item>http://www.baidu.com/favicon.ico</item>
     <item>http://www.baidu.com/s?wd={searchTerms}</item>
-    <item>GB2312</item>
+    <item>UTF-8</item>
+    <item></item>
+  </string-array>
+  <string-array name="baidu_en" translatable="false">
+    <item>Baidu</item>
+    <item>baidu.com</item>
+    <item>http://www.baidu.com/favicon.ico</item>
+    <item>http://www.baidu.com/s?wd={searchTerms}</item>
+    <item>UTF-8</item>
     <item></item>
   </string-array>
   <string-array name="yahoo_ch" translatable="false">
@@ -747,6 +755,23 @@ http://www.opensearch.org/Specifications/OpenSearch/1.1/Draft_4#OpenSearch_1.1_p
     <item>http://www.bing.com/search?setmkt=en-ZA&amp;q={searchTerms}</item>
     <item>UTF-8</item>
     <item>http://api.bing.com/osjson.aspx?query={searchTerms}&amp;language={language}</item>
+  </string-array>
+  <string-array name="cmcc_cn" translatable="false">
+    <item>移动搜索</item>
+    <item>s.139.com</item>
+    <item>http://s.139.com/favicon.ico</item>
+    <item>http://s.139.com/search.do?q={searchTerms}&amp;category=downloadable|web|browseable&amp;tid=2123,2124,2125,2126&amp;fr=portalcustom2</item>
+    <item>UTF-8</item>
+    <item></item>
+  </string-array>
+
+  <string-array name="cmcc" translatable="false">
+    <item>139 Search</item>
+    <item>s.139.com</item>
+    <item>http://s.139.com/favicon.ico</item>
+    <item>http://s.139.com/search.do?q={searchTerms}&amp;category=downloadable|web|browseable&amp;tid=2123,2124,2125,2126&amp;fr=portalcustom2</item>
+    <item>UTF-8</item>
+    <item></item>
   </string-array>
 </resources>
 
