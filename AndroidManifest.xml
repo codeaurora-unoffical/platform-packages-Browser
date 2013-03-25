@@ -197,6 +197,26 @@
 
         <activity android:name="ComboViewActivity">
         </activity>
+        <activity android:name="DownloadSettings" android:label="@string/download_settings_title"
+                  android:theme="@style/DialogWhenLarge"
+                  android:launchMode="singleTask"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.BROWSERDOWNLOAD" />
+                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+<!-- this activity is for cmcc bookmarks -->
+      <activity android:name="AddBookmarkFolder" android:label="@string/save_bookmark_folder"
+                  android:theme="@style/DialogWhenLarge"
+                  android:configChanges="orientation|keyboardHidden|screenSize">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.dir/bookmark"/>
+            </intent-filter>
+        </activity>
 
         <!-- Bookmark thumbnail homescreen widget -->
         <receiver
@@ -224,6 +244,13 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
+        </activity>
+        <!-- add or edit my navigation activity -->
+        <activity android:name=".mynavigation.AddMyNavigationPage" 
+                  android:label="@string/my_navigation_page_title" 
+                  android:configChanges="orientation|keyboardHidden" 
+                  android:windowSoftInputMode="stateHidden"
+                  >
         </activity>
 
         <!-- Makes .BrowserActivity the search target for any activity in Browser -->
@@ -268,6 +295,10 @@
                   android:authorities="com.android.browser.snapshots"
                   android:exported="false" />
 
+        <provider
+            android:name=".provider.MyNavigationProvider"
+            android:authorities="com.android.browser.mynavigation"
+            android:exported="false" />
     </application>
 
 </manifest>
