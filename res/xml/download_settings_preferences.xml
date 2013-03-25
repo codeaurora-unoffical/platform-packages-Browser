@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<PreferenceScreen 
+        xmlns:android="http://schemas.android.com/apk/res/android" >
+        
+    <PreferenceCategory
+       android:title="@string/pref_download_title"
+       android:key="download_path_setting_category">
+         <PreferenceScreen
+               android:key="download_path_setting_screen"
+               android:title="@string/pref_download_path_setting_screen_title"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
