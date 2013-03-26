@@ -122,7 +122,6 @@ public class DownloadHandler {
                 return true;
             }
 
-
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.parse(url), mimetype);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -209,10 +208,10 @@ public class DownloadHandler {
             mimetype = mimetype.replaceAll("\"", "");
         }
 
-        Log.d(LOGTAG, "----------contentDisposition--------->" + contentDisposition);
+        Log.d(LOGTAG, "contentDisposition is : ->" + contentDisposition);
         String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
-        Log.d(LOGTAG, "----------start filename--------->" + filename + 
-              " ----------mimetype is---------->" + mimetype);
+        Log.d(LOGTAG, "start filenameis :->" + filename + 
+              " and mimetype is :->" + mimetype);
         if (mimetype == null) {
             // We must have long pressed on a link or image to download it. We
             // are not sure of the mimetype in this case, so do a head request
@@ -347,13 +346,13 @@ public class DownloadHandler {
     /**
      * the operation for starting download 
      * 
-     * 
-     * @param activity 
-     * @param url download url from server
-     * @param userAgent Browser's userAgent
-     * @param contentDisposition the file name will be from it
-     * @param mimetype the file's type
-     * @param privateBrowsing if under private Browsering 
+     * @param activity Activity requesting the download.
+     * @param url The full url to the content that should be downloaded
+     * @param userAgent User agent of the downloading application.
+     * @param contentDisposition Content-disposition http header, if present.
+     * @param mimetype The mimetype of the content reported by the server
+     * @param referer The referer associated with the downloaded url
+     * @param privateBrowsing If the request is coming from a private browsing tab. 
      * @param contentLength file's size
      * @param filename the download file's name
      * @param downloadPath the downlaod file will be save in 
@@ -415,7 +414,7 @@ public class DownloadHandler {
     }
 
     /**
-     * if the storage status OK for download file into it
+     * wheather the storage status OK for download file
      * 
      * @param activity 
      * @param filename the download file's name 
@@ -466,7 +465,7 @@ public class DownloadHandler {
     }
 
     /**
-     * if support Phone Storage
+     * wheather support Phone Storage
      * 
      * @return boolean true support Phone Storage ,false will be not
      */
@@ -474,6 +473,12 @@ public class DownloadHandler {
         return true;
     }
 
+    /**
+     * 
+     * show Dialog to warn filename is null
+     * 
+     * @param activity 
+     */
     public static void displayFilenameEmpty(Activity activity) {
         new AlertDialog.Builder(activity)
             .setTitle(R.string.filename_empty_title)
@@ -518,6 +523,16 @@ public class DownloadHandler {
 
     }
 
+    /**
+     * 
+     * translate the directory name into a name which is easy to 
+     * know for user 
+     * 
+     * @param activity 
+     * @param downloadPath 
+     * 
+     * @return String 
+     */
     public static String getDownloadPathForUser(Activity activity, String downloadPath) {
         if (downloadPath == null) {
             return downloadPath;
