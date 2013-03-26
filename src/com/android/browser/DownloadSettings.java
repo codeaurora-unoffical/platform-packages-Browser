@@ -144,7 +144,7 @@ public class DownloadSettings extends Activity {
             filenameBase = getFilenameBaseFromUserEnter(); 
             //check the filename user enter is null or not           
             if (filenameBase.length() <= 0) {
-                DownloadHandler.displayFilenameEmpty(DownloadSettings.this);
+                DownloadHandler.showFilenameEmptyDialog(DownloadSettings.this);
                 return;
             }
 
@@ -160,7 +160,7 @@ public class DownloadSettings extends Activity {
             try {
                 DownloadHandler.setAppointedFolder(downloadPath);
             } catch (Exception e) {
-                DownloadHandler.displayNoEnoughMemory(DownloadSettings.this);
+                DownloadHandler.showNoEnoughMemoryDialog(DownloadSettings.this);
                 return;
             }
             boolean isNoEnoughMemory = DownloadHandler.manageNoEnoughMemory(DownloadSettings.this, contentLength, downloadPath);

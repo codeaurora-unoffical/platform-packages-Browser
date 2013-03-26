@@ -312,7 +312,7 @@ public class DownloadHandler {
         return availableBlocks * blockSize; 
     }  
 
-    public static void displayNoEnoughMemory(Activity mContext) {
+    public static void showNoEnoughMemoryDialog(Activity mContext) {
         new AlertDialog.Builder(mContext)
             .setTitle(R.string.download_no_enough_memory)
             .setIconAttribute(android.R.attr.alertDialogIcon)
@@ -326,11 +326,11 @@ public class DownloadHandler {
         long mAvailableBytes = getAvailableMemory(root);
         if (mAvailableBytes > 0) {
             if (contentLength > mAvailableBytes) {
-                displayNoEnoughMemory(mContext);
+                showNoEnoughMemoryDialog(mContext);
                 return true;
             }
         } else {
-            displayNoEnoughMemory(mContext);    
+            showNoEnoughMemoryDialog(mContext);    
             return true;     
         }
         return false;
@@ -389,7 +389,7 @@ public class DownloadHandler {
         try {
             setDestinationDir(downloadPath, filename, request);
         } catch (Exception e) {
-            displayNoEnoughMemory(activity);
+            showNoEnoughMemoryDialog(activity);
             return;
         }
         // let this downloaded file be scanned by MediaScanner - so that it can 
@@ -479,7 +479,7 @@ public class DownloadHandler {
      * 
      * @param activity 
      */
-    public static void displayFilenameEmpty(Activity activity) {
+    public static void showFilenameEmptyDialog(Activity activity) {
         new AlertDialog.Builder(activity)
             .setTitle(R.string.filename_empty_title)
             .setIcon(android.R.drawable.ic_dialog_alert)
