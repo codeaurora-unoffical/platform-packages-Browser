@@ -29,7 +29,7 @@ public class BrowserUtils {
         super();
     } 
     public static final int filenameMaxLength = 32;
-    public static final int addressMaxLength = 1024;
+    public static final int addressMaxLength = 1048;
     public static void lengthFilter( final EditText editText, 
                                      final int max_length, final String err_msg) {
 
