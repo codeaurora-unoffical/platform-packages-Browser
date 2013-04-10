@@ -181,7 +181,7 @@ public class PhoneUi extends BaseUi {
         }
         MenuItem info = menu.findItem(R.id.page_info_menu_id);
         if (info != null) {
-            info.setVisible(false);
+            info.setVisible(true);
         }
         MenuItem newtab = menu.findItem(R.id.new_tab_menu_id);
         if (newtab != null && !mUseQuickControls) {
