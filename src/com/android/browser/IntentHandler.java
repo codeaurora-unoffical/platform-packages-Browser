@@ -96,11 +96,10 @@ public class IntentHandler {
                 || Intent.ACTION_SEARCH.equals(action)
                 || MediaStore.INTENT_ACTION_MEDIA_SEARCH.equals(action)
                 || Intent.ACTION_WEB_SEARCH.equals(action)) {
-           Uri uri = intent.getData();
-                if (uri != null && uri.toString().startsWith("content://")) { 
-                mController.loadUrl(current, uri.toString());
-                return;
-           } 
+
+            String url = intent.getStringExtra(SearchManager.QUERY);
+            mController.shouldOverrideUrlLoading(current, mController.getTabControl().getCurrentWebView(), url);
+
             // If this was a search request (e.g. search query directly typed into the address bar),
             // pass it on to the default web search provider.
             if (handleWebSearchIntent(mActivity, mController, intent)) {
