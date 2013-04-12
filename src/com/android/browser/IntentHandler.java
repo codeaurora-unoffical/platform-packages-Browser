@@ -98,7 +98,9 @@ public class IntentHandler {
                 || Intent.ACTION_WEB_SEARCH.equals(action)) {
 
             String url = intent.getStringExtra(SearchManager.QUERY);
-            mController.shouldOverrideUrlLoading(current, mController.getTabControl().getCurrentWebView(), url);
+            if (url != null && mController != null) {
+                mController.shouldOverrideUrlLoading(current, mController.getTabControl().getCurrentWebView(), url);
+            }
 
             // If this was a search request (e.g. search query directly typed into the address bar),
             // pass it on to the default web search provider.
