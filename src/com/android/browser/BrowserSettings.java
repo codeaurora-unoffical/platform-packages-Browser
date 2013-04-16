@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -54,7 +55,8 @@ import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.WeakHashMap;
-
+import com.qrd.plugin.feature_query.DefaultQuery;
+import android.util.Log;
 /**
  * Class for managing settings
  */
@@ -104,7 +106,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     private static final int DOUBLE_TAP_ZOOM_START_VAL = 5;
     // The size of a single step in the double tap zoom range, in percent
     private static final int DOUBLE_TAP_ZOOM_STEP = 5;
-
+    private final String LOGTAG = "BrowserSettings";
     private static BrowserSettings sInstance;
 
     private Context mContext;
@@ -710,6 +712,11 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     public String getDefaultTextEncoding() {
         return mPrefs.getString(PREF_DEFAULT_TEXT_ENCODING, null);
     }
+    
+	public String getDownloadPathFromSettings() {
+        return mPrefs.getString(PREF_DOWNLOAD_PATH_SETTINGS, DownloadHandler.getDefaultDownloadPath(mContext));
+    }
+    
 
     // -----------------------------
     // getter/setters for general_preferences.xml
