@@ -51,6 +51,8 @@ public interface PreferenceKeys {
     //Keys for download path settings
     static final String PREF_DOWNLOAD_PATH_SETTINGS = "download_path_setting_screen";
 
+	//add for cmcc test about landscape_only
+    static final String PREF_LANDSCAPEONLY = "landscape_only";
     // ----------------------
     // Keys for debug_preferences.xml
     // ----------------------
