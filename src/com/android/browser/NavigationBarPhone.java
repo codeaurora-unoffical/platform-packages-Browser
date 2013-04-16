@@ -15,11 +15,14 @@
  */
 package com.android.browser;
 
+import com.android.browser.UrlInputView.StateListener;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,8 +32,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnDismissListener;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-
-import com.android.browser.UrlInputView.StateListener;
+import android.text.TextUtils;
 
 public class NavigationBarPhone extends NavigationBarBase implements
         StateListener, OnMenuItemClickListener, OnDismissListener {
@@ -52,6 +54,7 @@ public class NavigationBarPhone extends NavigationBarBase implements
     private boolean mOverflowMenuShowing;
     private boolean mNeedsMenu;
     private View mIncognitoIcon;
+    private final String LOGTAG = "NavigationBarPhone";
 
     public NavigationBarPhone(Context context) {
         super(context);
@@ -126,6 +129,23 @@ public class NavigationBarPhone extends NavigationBarBase implements
      */
     @Override
     void setDisplayTitle(String title) {
+    	//modified for cmc test about show title and url in address box start 
+        String  url = null;
+        String urlTile = null;
+        Tab tab = mUiController.getTabControl().getCurrentTab();
+        if( tab != null){
+            url = tab.getUrl();
+            urlTile = tab.getTitle();
+            Log.e(LOGTAG,"display title url is " + url);
+        }
+        Log.e(LOGTAG,"display title title is " + title);
+
+        if(TextUtils.isEmpty(urlTile) && !TextUtils.isEmpty(title) && !TextUtils.isEmpty(url)) {
+            title = urlTile + "-" + url;
+        }
+
+        Log.e(LOGTAG,"display title after title is " + title);
+    	
         mUrlInput.setTag(title);
         if (!isEditingUrl()) {
             if (title == null) {
@@ -134,7 +154,15 @@ public class NavigationBarPhone extends NavigationBarBase implements
                 mUrlInput.setText(UrlUtils.stripUrl(title), false);
             }
             mUrlInput.setSelection(0);
+        } else {
+            if(url == null){
+                mUrlInput.setText(R.string.new_tab);
+            }else{
+                mUrlInput.setText(url, false);
+            }
+            mUrlInput.selectAll();
         }
+        //modified for cmcc test about show title and url in address box end
     }
 
     @Override

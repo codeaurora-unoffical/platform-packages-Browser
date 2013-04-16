@@ -130,12 +130,13 @@ public class UrlUtils {
         return null;
     }
 
-    /* package */ static String fixUrl(String inUrl) {
+    /* package */// static String fixUrl(String inUrl) {
         // FIXME: Converting the url to lower case
         // duplicates functionality in smartUrlFilter().
         // However, changing all current callers of fixUrl to
         // call smartUrlFilter in addition may have unwanted
         // consequences, and is deferred for now.
+    public static String fixUrl(String inUrl) {
         int colon = inUrl.indexOf(':');
         boolean allLower = true;
         for (int index = 0; index < colon; index++) {

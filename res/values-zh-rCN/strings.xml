@@ -398,6 +398,7 @@
     <string name="accessibility_state_frozen" msgid="8041539250447035570">"已保存的网页"</string>
     <string name="accessibility_transition_navscreen" msgid="2734915619351519547">"标签页管理"</string>
     <string name="accessibility_button_bookmarks_folder_up" msgid="9179389954714270505">"上一个文件夹"</string>
+    <!-- for my navigation on 2013.02.20-->
     <!-- Download path Settings -->
     <string name="pref_download_title">下载路径设置</string>
     <string name="pref_download_path_setting_screen_title">自定义下载路径</string>
