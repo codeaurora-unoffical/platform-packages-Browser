@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnDismissListener;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.text.TextUtils;
 
 public class NavigationBarPhone extends NavigationBarBase implements
         StateListener, OnMenuItemClickListener, OnDismissListener {
@@ -139,7 +140,7 @@ public class NavigationBarPhone extends NavigationBarBase implements
         }
         Log.e(LOGTAG,"display title title is " + title);
 
-        if(urlTile != null && title != null && !title.equals("")) {
+        if(TextUtils.isEmpty(urlTile) && !TextUtils.isEmpty(title) && !TextUtils.isEmpty(url)) {
             title = urlTile + "-" + url;
         }
 
