@@ -603,6 +603,7 @@
     <string name="pref_default_text_encoding">Text encoding</string>
     <!-- Options in the Default encoding dialog box -->
     <string-array name="pref_default_text_encoding_choices">
+        <item>Auto detector (auto-detector)</item>
         <item>Latin-1 (ISO-8859-1)</item>
         <item>Unicode (UTF-8)</item>
         <item>Chinese (GBK)</item>
@@ -618,6 +619,7 @@
     <string name="pref_default_text_encoding_dialogtitle">Text encoding</string>
     <!-- Do not translate. Actual encoding values. Must be valid text encodings understandable from WebKit. -->
     <string-array name="pref_default_text_encoding_values" translatable="false">
+        <item>auto-detector</item>
         <item>Latin-1</item>
         <item>UTF-8</item>
         <item>GBK</item>
@@ -627,7 +629,7 @@
         <item>EUC-JP</item>
         <item>EUC-KR</item>
     </string-array>
-    <string name="pref_default_text_encoding_default" translatable="false">Latin-1</string>
+    <string name="pref_default_text_encoding_default" translatable="false">auto-detector</string>
     <!-- Title for accessibility settings [CHAR LIMIT=25] -->
     <string name="pref_accessibility_title">Accessibility</string>
     <!-- Font size settings category under accessibility settings [CHAR LIMIT=50] -->
@@ -1116,6 +1118,8 @@
     <!-- add for override duplicate bookmark -->
     <string name="save_to_bookmarks_title">Save to Bookmarks</string>
     <string name="overwrite_bookmark_msg">This bookmark\'s name or address already exists, overwrite it?</string>
+    <!-- Upload drm file is unsupported -->
+    <string name="drm_file_unsupported">Drm file is unsupported!</string>
     <!-- add for landscape only control -->
     <string name="pref_content_landscape_only">Landscape-only display</string>
     <string name="pref_content_landscape_only_summary">Display pages only in the wider, landscape screen orientation</string>

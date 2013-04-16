@@ -256,6 +256,7 @@
     <string name="pref_development_title" msgid="3263854204533056480">"调试"</string>
     <string name="pref_default_text_encoding" msgid="5742965543955558478">"文字编码"</string>
   <string-array name="pref_default_text_encoding_choices">
+    <item>"自动检测 (auto-detector)"</item>  
     <item msgid="7275223955790513818">"拉丁语-1 (ISO-8859-1)"</item>
     <item msgid="2456597866837587140">"Unicode (UTF-8)"</item>
     <item msgid="6122474363777211732">"中文 (GBK)"</item>
@@ -399,6 +400,20 @@
     <string name="accessibility_transition_navscreen" msgid="2734915619351519547">"标签页管理"</string>
     <string name="accessibility_button_bookmarks_folder_up" msgid="9179389954714270505">"上一个文件夹"</string>
     <!-- for my navigation on 2013.02.20-->
+    <string name="my_navigation_delete_label">删除我的导航</string>
+    <string name="my_navigation_edit_label">编辑我的导航</string>
+    <string name="my_navigation_add_label">添加我的导航</string>
+    <string name="my_navigation_add">添加</string>
+    <string name="my_navigation_delete_msg">删除此网站?</string>
+    <string name="my_navigation_name">名称</string>
+    <string name="my_navigation_address">地址</string>
+    <string name="website_needs_title">名称不能为空</string>
+    <string name="website_needs_url">地址不能为空</string>
+    <string name="my_navigation_cannot_save_url">该网址可能不正确，请重新输入</string>
+    <string name="my_navigation_add_title">添加我的导航</string>
+    <string name="my_navigation_edit_title">编辑我的导航</string>
+    <string name="my_navigation_duplicate_url">该网址已经存在，请重新输入</string>
+    <string name="my_navigation_page_title">我的导航</string>
     <!-- Download path Settings -->
     <string name="pref_download_title">下载路径设置</string>
     <string name="pref_download_path_setting_screen_title">自定义下载路径</string>
@@ -442,6 +457,8 @@
     <!-- add for override duplicate bookmark -->
     <string name="save_to_bookmarks_title">保存书签</string>
     <string name="overwrite_bookmark_msg">该书签的标签或者地址已经存在，是否覆盖？</string>
+    <!-- Upload drm file is unsupported -->
+    <string name="drm_file_unsupported">不支持Drm文件上传!</string>
     <!-- add for landscape only control -->
     <string name="pref_content_landscape_only">仅横屏横屏模式显示</string>
     <string name="pref_content_landscape_only_summary">仅以横屏模式显示网页</string>
