@@ -228,8 +228,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
                 }
                 mPrefs.edit().remove(PREF_TEXT_SIZE).apply();
             }
-
-            sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            //add for cmcc and cu test default homepage start 
+            if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cmcc);
+            } else if (DefaultQuery.BROWSER_RES.equals("cu")) {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cu);
+            } else {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            }
+            //add for cmcc and cu test default homepage end 
             if (sFactoryResetUrl.indexOf("{CID}") != -1) {
                 sFactoryResetUrl = sFactoryResetUrl.replace("{CID}",
                     BrowserProvider.getClientId(mContext.getContentResolver()));
@@ -285,10 +292,20 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         settings.setMediaPlaybackRequiresUserGesture(!videoPlayback());
 
         String ua = mCustomUserAgents.get(settings);
+        Log.e(LOGTAG,"before setting user agent ua is" + ua);
+        Log.e(LOGTAG,"before setting user agent DefaultQuery.BROWSER_USER_AGENT is" + DefaultQuery.BROWSER_USER_AGENT);
         if (ua != null) {
             settings.setUserAgentString(ua);
         } else {
-            settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+            //modified for cmcc and cu test about user agent string start
+            if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
+                settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
+                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT");
+            } else {
+                settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+                Log.e(LOGTAG,"setting user agent as null");
+            }
+            //modified for cmcc and cu test about user agent string end
         }
 
         boolean useInverted = useInvertedRendering();

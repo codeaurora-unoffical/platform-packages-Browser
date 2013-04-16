@@ -802,6 +802,12 @@
     <!-- The default homepage. -->
     <string name="homepage_base" translatable="false">
         https://www.google.com/webhp?client={CID}&amp;source=android-home</string>
+    <!-- The default homepage for cmcc test. -->
+    <string name="homepage_base_cmcc" translatable="false">
+        http://wap.monternet.com</string>
+    <!-- The default homepage for cu test -->
+    <string name="homepage_base_cu" translatable="false">
+        http://www.wo.com.cn</string>
 
     <!-- Bookmarks -->
     <string-array name="bookmarks" translatable="false">
