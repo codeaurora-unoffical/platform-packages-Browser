@@ -28,11 +28,17 @@ import android.os.AsyncTask;
 import android.provider.Browser;
 import android.util.Log;
 import android.webkit.WebView;
-
+import android.webkit.URLUtil;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Matcher;
-
+import android.provider.ContactsContract.Intents.Insert;
+import android.provider.ContactsContract.Contacts;
+import android.webkit.WebView;
+import android.webkit.WebSettings;
+import android.widget.Toast;
+import android.content.DialogInterface;
+import android.app.AlertDialog;
 /**
  *
  */
@@ -46,6 +52,7 @@ public class UrlHandler {
     /* package */ final static String SCHEME_WTAI_MC = "wtai://wp/mc;";
     /* package */ final static String SCHEME_WTAI_SD = "wtai://wp/sd;";
     /* package */ final static String SCHEME_WTAI_AP = "wtai://wp/ap;";
+    /*package  */ final static String SCHEME_TEL = "tel:";
 
     Controller mController;
     Activity mActivity;
@@ -69,9 +76,10 @@ public class UrlHandler {
             // wtai://wp/mc;number
             // number=string(phone-number)
             if (url.startsWith(SCHEME_WTAI_MC)) {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(WebView.SCHEME_TEL +
-                        url.substring(SCHEME_WTAI_MC.length())));
+                //Intent intent = new Intent(Intent.ACTION_VIEW,
+                Intent intent = new Intent(Intent.ACTION_CALL_PRIVILEGED,
+                                           Uri.parse(WebView.SCHEME_TEL +
+                                                     url.substring(SCHEME_WTAI_MC.length())));
                 mActivity.startActivity(intent);
                 // before leaving BrowserActivity, close the empty child tab.
                 // If a new tab is created through JavaScript open to load this
@@ -84,21 +92,91 @@ public class UrlHandler {
             // dtmf=string(dialstring)
             if (url.startsWith(SCHEME_WTAI_SD)) {
                 // TODO: only send when there is active voice connection
-                return false;
+                //return false;
+                //add for cmcc test wtai://wap/sd; start 
+                Intent intent0 = new Intent(Intent.ACTION_CALL_PRIVILEGED,
+                                            Uri.parse(WebView.SCHEME_TEL +
+                                                      url.substring(SCHEME_WTAI_MC.length())));
+                mActivity.startActivity(intent0);
+                return true;
+                //add for cmcc test wtai://wap/sd; end
             }
             // wtai://wp/ap;number;name
             // number=string(phone-number)
             // name=string
             if (url.startsWith(SCHEME_WTAI_AP)) {
                 // TODO
-                return false;
+                //return false;
+                //add for cmcc wtai://wp; start
+                String decode_url = Uri.decode(url);
+                int idx0 = decode_url.indexOf(';');
+                if (idx0 == -1) {
+                    return true;
+                }
+                int idx1 = decode_url.indexOf(';', idx0+1);
+                String number = null;
+                String name = null;
+                if (idx1 == -1) {
+                    number = decode_url.substring(idx0+1);
+                } else {
+                    int idx2 = decode_url.indexOf('!', idx1+1);//get  !result,  this is the option 
+                    number = decode_url.substring(idx0+1, idx1);
+                    if (idx2==-1) {
+                        name = decode_url.substring(idx1+1);
+                    } else {
+                        name = decode_url.substring(idx1+1, idx2);
+                    }
+                }
+
+                Intent intent1 = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+                intent1.setType(Contacts.CONTENT_ITEM_TYPE);
+                intent1.putExtra(Insert.PHONE, number);
+                intent1.putExtra(Insert.NAME, name);
+
+                mActivity.startActivity(intent1);
+                return true;
             }
         }
+        //add for cmcc wtai://wp; start
 
+        //add for cmcc tel; start		
+        if (url.startsWith(SCHEME_TEL)) {
+            int idx = url.indexOf(':');
+            String numb = url.substring(idx + 1, url.length());
+            Intent intent2 = new Intent(Intent.ACTION_CALL_PRIVILEGED,
+                                        Uri.parse(WebView.SCHEME_TEL +
+                                                  numb));
+            mActivity.startActivity(intent2);
+            return true;
+        }
+        //add for cmcc tel; end
+        //add for cmcc rtsp:// start
+        if (url.startsWith("rtsp://")||url.startsWith("rtspu://") ||
+            url.startsWith("rtspt://")) {
+            Intent mIntent = null;
+            try {
+                mIntent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            } catch (URISyntaxException ex) {
+                return false;
+            }
+
+            mIntent.addCategory(Intent.CATEGORY_BROWSABLE);
+            mIntent.setComponent(null);
+            try {
+                if (mActivity.startActivityIfNeeded(mIntent, -1)) {
+                    return true;
+                }
+            } catch (ActivityNotFoundException ex) {
+                return false;
+            }
+            return true;       
+        }
+        //add for cmcc rtsp:// end
         // The "about:" schemes are internal to the browser; don't want these to
         // be dispatched to other apps.
         if (url.startsWith("about:")) {
-            return false;
+            //return false;
+            return isChangeUserAgentCurrent(view, url);
         }
 
         // If this is a Google search, attempt to add an RLZ string
@@ -125,6 +203,36 @@ public class UrlHandler {
 
         return false;
     }
+
+    //add for changing userAgent by user start 
+    private final String USER_AGENT_DEBUG_PRE = "about:debug.ua=";
+    private boolean isChangeUserAgentCurrent(final WebView view, String url) {
+
+        if (url.startsWith(USER_AGENT_DEBUG_PRE)) {
+            final String userAgent = Uri.decode(url).substring(USER_AGENT_DEBUG_PRE.length());
+            Log.e("UrlHandler", "input url is" + url);
+            final String msg = "UserAgent String is " + userAgent ;
+
+            if (view != null) {
+                Log.e("UrlHandler", "user change userAgent is " + userAgent);
+                 new AlertDialog.Builder(mActivity)
+                    .setTitle("Set UA")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setMessage(msg)
+                    .setPositiveButton(R.string.ok, 
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                BrowserSettings.getInstance().toggleCustomUseragent(view, userAgent);                               
+                            }})                           
+                    .show();
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+    //add for changing userAgent by user end
 
     boolean startActivityForUrl(Tab tab, String url) {
       Intent intent;

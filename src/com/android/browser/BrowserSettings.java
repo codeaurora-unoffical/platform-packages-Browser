@@ -992,4 +992,19 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             .putBoolean(KEY_LAST_RUN_PAUSED, isPaused)
             .apply();
     }
+
+    //Custom User Agent by user
+    public void toggleCustomUseragent(WebView view, String useragent) {
+        if (view == null) {
+            return;
+        }
+        WebSettings settings = view.getSettings();
+        if (mCustomUserAgents.get(settings) != null) {
+            mCustomUserAgents.remove(settings);
+            settings.setUserAgentString(useragent);
+        } else {
+            mCustomUserAgents.put(settings, useragent);
+            settings.setUserAgentString(useragent);
+        }
+    }
 }

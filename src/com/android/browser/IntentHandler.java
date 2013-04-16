@@ -96,6 +96,12 @@ public class IntentHandler {
                 || Intent.ACTION_SEARCH.equals(action)
                 || MediaStore.INTENT_ACTION_MEDIA_SEARCH.equals(action)
                 || Intent.ACTION_WEB_SEARCH.equals(action)) {
+
+            String url = intent.getStringExtra(SearchManager.QUERY);
+            if (url != null && mController != null) {
+                mController.shouldOverrideUrlLoading(current, mController.getTabControl().getCurrentWebView(), url);
+            }
+
             // If this was a search request (e.g. search query directly typed into the address bar),
             // pass it on to the default web search provider.
             if (handleWebSearchIntent(mActivity, mController, intent)) {
@@ -272,6 +278,9 @@ public class IntentHandler {
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri data = intent.getData();
             if (data != null) url = data.toString();
+            if (url != null && url.startsWith("content://")) {
+            	return false;
+            }
         } else if (Intent.ACTION_SEARCH.equals(action)
                 || MediaStore.INTENT_ACTION_MEDIA_SEARCH.equals(action)
                 || Intent.ACTION_WEB_SEARCH.equals(action)) {
