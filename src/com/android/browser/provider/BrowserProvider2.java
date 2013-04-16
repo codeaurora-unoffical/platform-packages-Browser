@@ -24,6 +24,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -36,6 +37,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.Browser;
 import android.provider.Browser.BookmarkColumns;
@@ -150,6 +152,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
     static final int THUMBNAILS = 10;
     static final int THUMBNAILS_ID = 11;
     static final int OMNIBOX_SUGGESTIONS = 20;
+    static final int HOMEPAGE = 60;
 
     static final int BOOKMARKS = 1000;
     static final int BOOKMARKS_ID = 1001;
@@ -230,6 +233,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         matcher.addURI(authority, "thumbnails", THUMBNAILS);
         matcher.addURI(authority, "thumbnails/#", THUMBNAILS_ID);
         matcher.addURI(authority, "omnibox_suggestions", OMNIBOX_SUGGESTIONS);
+        matcher.addURI(authority, "homepage", HOMEPAGE);
 
         // Legacy
         matcher.addURI(LEGACY_AUTHORITY, "searches", SEARCHES);
@@ -1132,7 +1136,19 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 qb.setTables(VIEW_OMNIBOX_SUGGESTIONS);
                 break;
             }
-
+                // add for config home page for DM start
+            case HOMEPAGE:
+                String homepage = BrowserSettings.getInstance().getHomePage();
+                Log.d(LOGTAG,"get home page for DM");
+                if (null == homepage) {
+                    return null;
+                }
+                String arrColumns[] = {"homepage"};
+                String arrHomepage[] = {homepage};
+                MatrixCursor matrixCursor = new MatrixCursor(arrColumns, 1);
+                matrixCursor.addRow(arrHomepage);
+                return matrixCursor;
+                // add for config home page for DM end
             default: {
                 throw new UnsupportedOperationException("Unknown URL " + uri.toString());
             }
@@ -1754,7 +1770,21 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                         selection, selectionArgs);
                 break;
             }
-
+		// add for config home page for DM start
+            case HOMEPAGE:
+                if (null != values) {
+                    String homepage = values.getAsString("homepage");
+                    if (null != homepage) { 
+                        if (BrowserSettings.getInstance() == null) {
+                            BrowserSettings.initialize(getContext());
+                        }
+                        BrowserSettings.getInstance().setHomePage(homepage);
+                        Log.d(LOGTAG,"set home page for DM");
+                        return 1; 
+                    }                    
+                }
+                return 0; 
+		// add for config home page for DM end
             default: {
                 throw new UnsupportedOperationException("Unknown update URI " + uri);
             }
