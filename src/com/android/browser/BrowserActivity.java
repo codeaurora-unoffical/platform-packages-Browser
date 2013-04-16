@@ -101,6 +101,13 @@ public class BrowserActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         if (shouldIgnoreIntents()) return;
+        if (mController == NullController.INSTANCE) {
+            Log.w(LOGTAG, "onNewIntent for Action_Search Intent reached before finish(), " +
+                    "so enter onNewIntent instead of on create");
+            startActivity(intent);
+            finish();
+            return;
+        }
         if (ACTION_RESTART.equals(intent.getAction())) {
             Bundle outState = new Bundle();
             mController.onSaveInstanceState(outState);
