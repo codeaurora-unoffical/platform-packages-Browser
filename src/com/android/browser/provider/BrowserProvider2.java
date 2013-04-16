@@ -53,6 +53,7 @@ import android.provider.ContactsContract.RawContacts;
 import android.provider.SyncStateContract;
 import android.text.TextUtils;
 
+import com.android.browser.BrowserSettings;
 import com.android.browser.R;
 import com.android.browser.UrlUtils;
 import com.android.browser.widget.BookmarkThumbnailWidgetProvider;
@@ -65,6 +66,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import android.util.Log;
+import com.qrd.plugin.feature_query.DefaultQuery;
 
 public class BrowserProvider2 extends SQLiteContentProvider {
 
@@ -72,6 +75,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
     public static final String PARAM_ALLOW_EMPTY_ACCOUNTS = "allowEmptyAccounts";
 
     public static final String LEGACY_AUTHORITY = "browser";
+    private static final String LOGTAG = "BrowserProvider2";
     static final Uri LEGACY_AUTHORITY_URI = new Uri.Builder()
             .authority(LEGACY_AUTHORITY).scheme("content").build();
 
@@ -655,10 +659,21 @@ public class BrowserProvider2 extends SQLiteContentProvider {
 
         private void addDefaultBookmarks(SQLiteDatabase db, long parentId) {
             Resources res = getContext().getResources();
-            final CharSequence[] bookmarks = res.getTextArray(
-                    R.array.bookmarks);
+            //modified for cmcc and cu test default bookmarks start 
+            final CharSequence[] bookmarks;
+            TypedArray preloads;             
+             if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
+                bookmarks= res.getTextArray(R.array.bookmarks_cmcc);
+                preloads = res.obtainTypedArray(R.array.bookmark_preloads_cmcc);
+             } else if (DefaultQuery.BROWSER_RES.equals("cu")) {
+                 bookmarks= res.getTextArray(R.array.bookmarks_cu);
+                 preloads = res.obtainTypedArray(R.array.bookmark_preloads_cu);
+             } else {
+                 bookmarks= res.getTextArray(R.array.bookmarks);
+                 preloads = res.obtainTypedArray(R.array.bookmark_preloads);
+             }
+             //modified for cmcc and cu test default bookmarks end
             int size = bookmarks.length;
-            TypedArray preloads = res.obtainTypedArray(R.array.bookmark_preloads);
             try {
                 String parent = Long.toString(parentId);
                 String now = Long.toString(System.currentTimeMillis());

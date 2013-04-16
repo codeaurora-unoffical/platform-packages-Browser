@@ -438,5 +438,8 @@
     <string name="exit_quit">退出</string>
     <string name="save_bookmark_folder">新建书签文件夹</string>
     <string name="menu_bookmarks_history">书签/历史记录</string>
+    <!-- add for override duplicate bookmark -->
+    <string name="save_to_bookmarks_title">保存书签</string>
+    <string name="overwrite_bookmark_msg">该书签的标签或者地址已经存在，是否覆盖？</string>
     <string name="acivity_not_found">没有找到处理 Intent <xliff:g id="NOACTIVITY">%s</xliff:g> 的Activity.</string>
 </resources>
