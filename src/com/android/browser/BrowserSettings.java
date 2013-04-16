@@ -550,7 +550,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         WebSettings settings = view.getSettings();
         if (mCustomUserAgents.get(settings) != null) {
             mCustomUserAgents.remove(settings);
-            settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+            //modified for cmcc and cu test about user agent string start
+            if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
+                settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
+                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT in toggleDesktopUseragent");
+            } else {
+                settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
+                Log.e(LOGTAG,"setting user agent as null in toggleDesktopUseragent");
+            }
+            //modified for cmcc and cu test about user agent string end
         } else {
             mCustomUserAgents.put(settings, DESKTOP_USERAGENT);
             settings.setUserAgentString(DESKTOP_USERAGENT);
