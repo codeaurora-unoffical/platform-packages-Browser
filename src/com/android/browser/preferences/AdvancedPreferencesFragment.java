@@ -51,7 +51,12 @@ public class AdvancedPreferencesFragment extends PreferenceFragment
         super.onCreate(savedInstanceState);
 
         // Load the XML preferences file
-        addPreferencesFromResource(R.xml.advanced_preferences);
+
+        if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
+            addPreferencesFromResource(R.xml.advanced_preferences_cmcc);
+        } else {
+            addPreferencesFromResource(R.xml.advanced_preferences);
+        }
 
         PreferenceScreen websiteSettings = (PreferenceScreen) findPreference(
                 PreferenceKeys.PREF_WEBSITE_SETTINGS);

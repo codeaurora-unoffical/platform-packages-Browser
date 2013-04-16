@@ -24,6 +24,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.qrd.plugin.feature_query.DefaultQuery;
 
 public class SearchEngines {
 
@@ -36,7 +37,13 @@ public class SearchEngines {
     public static List<SearchEngineInfo> getSearchEngineInfos(Context context) {
         ArrayList<SearchEngineInfo> searchEngineInfos = new ArrayList<SearchEngineInfo>();
         Resources res = context.getResources();
-        String[] searchEngines = res.getStringArray(R.array.search_engines);
+        String[] searchEngines;
+        if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
+            Log.e(TAG,"this search engine list is for cmcc test");
+            searchEngines = res.getStringArray(R.array.search_engines_cmcc);
+        } else {
+            searchEngines = res.getStringArray(R.array.search_engines);
+        }
         for (int i = 0; i < searchEngines.length; i++) {
             String name = searchEngines[i];
             SearchEngineInfo info = new SearchEngineInfo(context, name);
