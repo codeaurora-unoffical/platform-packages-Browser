@@ -804,12 +804,6 @@
     <!-- The default homepage. -->
     <string name="homepage_base" translatable="false">
         https://www.google.com/webhp?client={CID}&amp;source=android-home</string>
-    <!-- The default homepage for cmcc test. -->
-    <string name="homepage_base_cmcc" translatable="false">
-        http://wap.monternet.com</string>
-    <!-- The default homepage for cu test -->
-    <string name="homepage_base_cu" translatable="false">
-        http://www.wo.com.cn</string>
 
     <!-- Bookmarks -->
     <string-array name="bookmarks" translatable="false">
@@ -842,38 +836,7 @@
         <item>BBC</item>
         <item>http://www.bbc.co.uk/</item>
     </string-array>
-    <!-- Bookmarks for cmcc test -->
-    <string-array name="bookmarks_cmcc" translatable="false">
-        <item>MM综合门户</item>
-        <item>http://mm.10086.cn/a/j/2743/</item>
-        <item>手机阅读</item>
-        <item>http://wap.cmread.com</item>
-        <item>手机游戏</item>
-        <item>http://g.10086.cn</item>
-        <item>手机视频</item>
-        <item>http://wap.cmvideo.cn</item>
-        <item>无线音乐</item>
-        <item>http://m.10086.cn</item>
-        <item>12580</item>
-        <item>http://12580wap.10086.cn/?pid=PCM002942000</item>
-        <item>飞信首页</item>
-        <item>http://f.10086.cn</item>
-        <item>139邮箱</item>
-        <item>http://mail.10086.cn</item>
-        <item>冲浪网址</item>
-        <item>http://go.10086.cn/?coc=6GG2GGRq</item>
-        <item>10086 门户</item>
-        <item>http://10086.cn/m</item>
-        <item>移动应用商场</item>
-        <item>http://a.10086.cn</item>
-        <item>移动梦网</item>
-        <item>http://wap.monternet.com</item>
-    </string-array>
-    <!-- Bookmarks for cu test -->
-    <string-array name="bookmarks_cu" translatable="false">
-        <item>沃门户</item>
-        <item>http://www.wo.com.cn</item>
-    </string-array>
+
     <!-- Bookmark name for Picasa website -->
     <string name="picasa" translatable="false">Picasa</string>
 
