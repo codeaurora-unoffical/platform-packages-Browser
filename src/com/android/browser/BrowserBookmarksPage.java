@@ -57,6 +57,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import android.os.Looper;
 
 interface BookmarksPageCallbacks {
     // Return true if handled
@@ -411,6 +412,10 @@ public class BrowserBookmarksPage extends Fragment implements View.OnCreateConte
         LoaderManager lm = getLoaderManager();
         lm.destroyLoader(LOADER_ACCOUNTS);
         for (int id : mBookmarkAdapters.keySet()) {
+	    BrowserBookmarksAdapter adapter = mBookmarkAdapters.get(id);
+            if ((adapter != null) && (adapter.getBookmarksLooper() != null)) {
+                adapter.getBookmarksLooper().quit();
+            }
             lm.destroyLoader(id);
         }
         mBookmarkAdapters.clear();
