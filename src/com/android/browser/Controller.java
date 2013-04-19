@@ -2866,9 +2866,12 @@ public class Controller
 
     protected void closeCurrentTab(boolean andQuit) {
         if (mTabControl.getTabCount() == 1) {
-            mCrashRecoveryHandler.clearState();
-            mTabControl.removeTab(getCurrentTab());
-            mActivity.finish();
+            //bufix:Under quick control mode, when close last tab,
+            //not pop exit Browser AlertDialog
+            //mCrashRecoveryHandler.clearState();
+            //mTabControl.removeTab(getCurrentTab());
+            showCloseSelectionDialog(mActivity);
+            //mActivity.finish();
             return;
         }
         final Tab current = mTabControl.getCurrentTab();
