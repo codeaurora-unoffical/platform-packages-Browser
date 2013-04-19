@@ -200,7 +200,10 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         @Override
         public void run() {
             DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-            mFontSizeMult = metrics.scaledDensity / metrics.density;
+            //because modified system font size as 10 instead of 9,this infect webpage's font size in Browser
+            //In this case, delete fallow code to sovle this problem. In other word, webpage's font size will 
+            //be not infect by system font size change. 
+            //mFontSizeMult = metrics.scaledDensity / metrics.density;
             // the cost of one cached page is ~3M (measured using nytimes.com). For
             // low end devices, we only cache one page. For high end devices, we try
             // to cache more pages, currently choose 5.
