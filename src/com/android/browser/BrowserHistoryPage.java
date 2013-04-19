@@ -658,6 +658,11 @@ public class BrowserHistoryPage extends Fragment
             if (data != null) {
                 item.setFavicon(BitmapFactory.decodeByteArray(data, 0,
                         data.length));
+            } else {
+                //Bug fix: when delete history item from history manager interface
+                //this history item's icon did not detete.so we should
+                //set the default image for initial there.
+                item.setFavicon(null);
             }
             item.setIsBookmark(cursor.getInt(HistoryQuery.INDEX_IS_BOOKMARK) == 1);
             return item;
