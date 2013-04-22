@@ -420,9 +420,39 @@ class Tab implements PictureListener {
          * Show a dialog informing the user of the network error reported by
          * WebCore if it is in the foreground.
          */
+        //begin 2013-04-22 added for retry loadURL when networklink error
+        private int retryNumber = 0;
+        private String retryString = "";
+        //end 2013-04-22 added for retry loadURL when networklink error
         @Override
         public void onReceivedError(WebView view, int errorCode,
                 String description, String failingUrl) {
+            //begin 2013-04-22 added for retry loadURL when networklink error
+            Log.e(LOGTAG, "onReceivedError " + errorCode + " " + failingUrl + " " + description);
+
+            if (retryString.equals(failingUrl) == false) {
+                retryNumber = 0;
+            }
+            if ((retryNumber < 3) && (errorCode == WebViewClient.ERROR_UNKNOWN || 
+                                      errorCode == WebViewClient.ERROR_HOST_LOOKUP || 
+                                      errorCode == WebViewClient.ERROR_CONNECT ||
+                                      errorCode == WebViewClient.ERROR_IO ||
+                                      errorCode == WebViewClient.ERROR_TIMEOUT)) {
+                try {
+                    Thread.sleep(3*1000);                
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                loadUrl(failingUrl,null);
+                retryNumber ++;
+                retryString = failingUrl;
+                Log.e(LOGTAG, "onReceivedError1  retryNumber is " + retryNumber);
+                return;
+            } else {
+                retryNumber = 0;
+            }
+            //end 2013-04-22 added for retry loadURL when networklink error
+
             if (errorCode != WebViewClient.ERROR_HOST_LOOKUP &&
                     errorCode != WebViewClient.ERROR_CONNECT &&
                     errorCode != WebViewClient.ERROR_BAD_URL &&

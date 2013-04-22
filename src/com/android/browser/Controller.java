@@ -147,7 +147,9 @@ public class Controller
     private static final int RELEASE_WAKELOCK = 107;
 
     static final int UPDATE_BOOKMARK_THUMBNAIL = 108;
-
+    //begin 2013-04-22 added for retry loadURL when networklink error
+    static final int TIMEOUT_RELOAD = 109;
+    //end 2013-04-22 added for retry loadURL when networklink error
     private static final int OPEN_BOOKMARKS = 201;
 
     private static final int EMPTY_MENU = -1;
@@ -588,6 +590,15 @@ public class Controller
                             updateScreenshot(tab);
                         }
                         break;
+                    //begin 2013-04-22 added for retry loadURL when networklink error
+                    case TIMEOUT_RELOAD:
+                        Tab tab1 = (Tab) msg.obj;
+                        if (tab1 != null) {
+                            Log.e(LOGTAG,"TIMEOUT tab1.getUrl() is :" +  tab1.getUrl());
+                            loadUrl(tab1, tab1.getUrl());
+                        }
+                    break;
+                    //end 2013-04-22 added for retry loadURL when networklink error
                 }
             }
         };
@@ -976,7 +987,14 @@ public class Controller
     @Override
     public void onProgressChanged(Tab tab) {
         int newProgress = tab.getLoadProgress();
-
+        //begin 2013-04-22 added for retry loadURL when networklink error
+        if (newProgress <= 10) {
+            Log.e(LOGTAG,"onProgressChanged  sendMessageDelayed");
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(TIMEOUT_RELOAD, 0, 0, tab), 40*1000);
+        } else {
+            mHandler.removeMessages(Controller.TIMEOUT_RELOAD, tab);
+        }
+        //end 2013-04-22 added for retry loadURL when networklink error
         if (newProgress == 100) {
             CookieSyncManager.getInstance().sync();
             // onProgressChanged() may continue to be called after the main
