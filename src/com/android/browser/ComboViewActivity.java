@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
- * Copyright (c) 2011, 2012 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2011-2013 The Linux Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +48,8 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
     public static final String EXTRA_OPEN_SNAPSHOT = "snapshot_id";
     public static final String EXTRA_OPEN_ALL = "open_all";
     public static final String EXTRA_CURRENT_URL = "url";
+    private static Object mMdmWarmupObj = null;
+    private static Class mMdmWarmupType = null;
     private ViewPager mViewPager;
     private TabsAdapter mTabsAdapter;
 
@@ -91,11 +92,14 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
             switch (startingView) {
             case Bookmarks:
                 try {
-                    String pluginJar = "/system/framework/modemwarmup.jar";
-                    dalvik.system.PathClassLoader pluginClassLoader=null;
-                    pluginClassLoader = new dalvik.system.PathClassLoader(pluginJar,ClassLoader.getSystemClassLoader());
-                    Class type = Class.forName("com.android.qualcomm.modemwarmup.ModemWarmup",true,pluginClassLoader);
-                    type.getMethod("warmModem").invoke(type.newInstance());
+                    if (mMdmWarmupObj==null) {
+                        String pluginJar = "/system/framework/modemwarmup.jar";
+                        dalvik.system.PathClassLoader pluginClassLoader=null;
+                        pluginClassLoader = new dalvik.system.PathClassLoader(pluginJar,ClassLoader.getSystemClassLoader());
+                        mMdmWarmupType = Class.forName("com.android.qualcomm.modemwarmup.ModemWarmup",true,pluginClassLoader);
+                        mMdmWarmupObj = mMdmWarmupType.newInstance();
+                    }
+                    mMdmWarmupType.getMethod("warmModem").invoke(mMdmWarmupObj);
                 } catch (Throwable e) {
                     Log.v("netstack: ", "Failed to load warmModem symbol in modemwarmup.jar");
                 }
@@ -103,11 +107,14 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
                 break;
             case History:
                 try {
-                    String pluginJar = "/system/framework/modemwarmup.jar";
-                    dalvik.system.PathClassLoader pluginClassLoader=null;
-                    pluginClassLoader = new dalvik.system.PathClassLoader(pluginJar,ClassLoader.getSystemClassLoader());
-                    Class type = Class.forName("com.android.qualcomm.modemwarmup.ModemWarmup",true,pluginClassLoader);
-                    type.getMethod("warmModem").invoke(type.newInstance());
+                    if (mMdmWarmupObj==null) {
+                        String pluginJar = "/system/framework/modemwarmup.jar";
+                        dalvik.system.PathClassLoader pluginClassLoader=null;
+                        pluginClassLoader = new dalvik.system.PathClassLoader(pluginJar,ClassLoader.getSystemClassLoader());
+                        mMdmWarmupType = Class.forName("com.android.qualcomm.modemwarmup.ModemWarmup",true,pluginClassLoader);
+                        mMdmWarmupObj = mMdmWarmupType.newInstance();
+                    }
+                    mMdmWarmupType.getMethod("warmModem").invoke(mMdmWarmupObj);
                 } catch (Throwable e) {
                     Log.v("netstack: ", "Failed to load warmModem symbol in modemwarmup.jar");
                 }
