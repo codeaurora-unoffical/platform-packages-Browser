@@ -32,7 +32,7 @@ import android.widget.CursorAdapter;
 import com.android.browser.R;
 
 import java.lang.ref.WeakReference;
-
+import android.os.Looper;
 public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
 
     private static final String LOGTAG = "BookmarksThreadedAdapter";
@@ -142,6 +142,9 @@ public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
         }
     }
 
+    public Looper getBookmarksLooper() {
+        return mLoadHandler.getLooper();
+    }
     private void loadRowObject(int position, LoadContainer container) {
         if (container == null
                 || container.position != position
