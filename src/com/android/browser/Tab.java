@@ -101,6 +101,8 @@ class Tab implements PictureListener {
     private static final int CAPTURE_DELAY = 100;
     private static final int INITIAL_PROGRESS = 5;
 
+	private static final int MSG_RETRY_LOADURL = 43;//msg handling retry loadurl, yh add
+
     private static Bitmap sDefaultFavicon;
 
     private static Paint sAlphaPaint = new Paint();
@@ -193,6 +195,10 @@ class Tab implements PictureListener {
      * See {@link #clearBackStackWhenItemAdded(String)}.
      */
     private Pattern mClearHistoryUrlPattern;
+	//begin 2013-04-22 added for retry loadURL when networklink error
+        private int retryNumber = 0;
+        private String retryString = "";  
+    //end 2013-04-22 added for retry loadURL when networklink error
 
     private static synchronized Bitmap getDefaultFavicon(Context context) {
         if (sDefaultFavicon == null) {
@@ -421,8 +427,8 @@ class Tab implements PictureListener {
          * WebCore if it is in the foreground.
          */
         //begin 2013-04-22 added for retry loadURL when networklink error
-        private int retryNumber = 0;
-        private String retryString = "";
+        //private int retryNumber = 0;
+        //private String retryString = "";
         //end 2013-04-22 added for retry loadURL when networklink error
         @Override
         public void onReceivedError(WebView view, int errorCode,
@@ -439,14 +445,18 @@ class Tab implements PictureListener {
                                       errorCode == WebViewClient.ERROR_IO ||
                                       errorCode == WebViewClient.ERROR_TIMEOUT)) {
                 try {
-                    Thread.sleep(3*1000);                
+                    //Thread.sleep(3*1000);   
+                    mHandler.sendEmptyMessageDelayed(MSG_RETRY_LOADURL, 3*1000);//yh add
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                loadUrl(failingUrl,null);
-                retryNumber ++;
-                retryString = failingUrl;
-                Log.e(LOGTAG, "onReceivedError1  retryNumber is " + retryNumber);
+                /*
+                		loadUrl(failingUrl,null);
+                		retryNumber ++;
+                		*/
+               	retryString = failingUrl;
+                		
+                //Log.e(LOGTAG, "onReceivedError1  retryNumber is " + retryNumber);
                 return;
             } else {
                 retryNumber = 0;
@@ -1235,6 +1245,12 @@ class Tab implements PictureListener {
                 switch (m.what) {
                 case MSG_CAPTURE:
                     capture();
+                    break;
+				// Private handler for handling retry loadurl, yh add
+				case MSG_RETRY_LOADURL:
+                    loadUrl(retryString,null);
+                	retryNumber ++;
+					Log.e(LOGTAG, "onReceivedError retryNumber is " + retryNumber);
                     break;
                 }
             }
