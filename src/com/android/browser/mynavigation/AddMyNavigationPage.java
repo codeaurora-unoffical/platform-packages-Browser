@@ -142,8 +142,12 @@ public class AddMyNavigationPage extends Activity {
                     values.put(MyNavigationUtil.WEBSITE, 1 + "");
                     if (toDefaultThumbnail) {
                         ByteArrayOutputStream os = new ByteArrayOutputStream();
-                        Bitmap bm = BitmapFactory.decodeResource(AddMyNavigationPage.this.getResources(),
-                                                                 R.raw.my_navigation_thumbnail_default);
+                        Resources res = BrowserUtils.getResourcesFromExternalRes(AddMyNavigationPage.this);
+                        int idRawDefault = BrowserUtils.getResourcesIdFromRes(res, "my_navigation_thumbnail_default", "raw", R.raw.my_navigation_thumbnail_default);
+                        if (idRawDefault == R.raw.my_navigation_thumbnail_default) {
+                            res = AddMyNavigationPage.this.getResources();
+                        }
+                        Bitmap bm = BitmapFactory.decodeResource(res, idRawDefault);
                         bm.compress(Bitmap.CompressFormat.PNG, 100, os);
                         values.put(MyNavigationUtil.THUMBNAIL, os.toByteArray());
                     }

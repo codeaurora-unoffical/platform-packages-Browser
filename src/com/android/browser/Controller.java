@@ -115,6 +115,7 @@ import android.app.ActivityManagerNative;
 import com.android.internal.telephony.TelephonyIntents;
 import android.telephony.TelephonyManager;
 import android.provider.Settings;
+import android.content.res.Resources;
 /**
  * Controller for browser
  */
@@ -1678,8 +1679,12 @@ public class Controller
                 values.put(MyNavigationUtil.URL, "ae://" + cursor.getLong(0) + "add-fav");
                 values.put(MyNavigationUtil.WEBSITE, 0 + "");
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
-                Bitmap bm = BitmapFactory.decodeResource(this.getContext().getResources(),
-                        R.raw.my_navigation_add);
+                Resources res = BrowserUtils.getResourcesFromExternalRes(this.getContext());
+                int idRawAdd = BrowserUtils.getResourcesIdFromRes(res, "my_navigation_add", "raw", R.raw.my_navigation_add);
+                if (idRawAdd == R.raw.my_navigation_add) {
+                    res = this.getContext().getResources();
+                }
+                Bitmap bm = BitmapFactory.decodeResource(res, idRawAdd);
                 bm.compress(Bitmap.CompressFormat.PNG, 100, os);
                 values.put(MyNavigationUtil.THUMBNAIL, os.toByteArray());
                 Log.d(LOGTAG, "Controller deleteMyNavigationItem uri is : " + uri);

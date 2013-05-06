@@ -12,6 +12,8 @@ import android.text.Spanned;
 import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.util.Log;
 
 public class BrowserUtils {
     public static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
@@ -25,9 +27,7 @@ public class BrowserUtils {
              ")" +
              "(.*)" );
 
-    BrowserUtils(){
-        super();
-    } 
+    private static final String LOGTAG = "BrowserUtils";
     public static final int filenameMaxLength = 32;
     public static final int addressMaxLength = 2048;
     public static void lengthFilter( final EditText editText, 
@@ -122,6 +122,36 @@ public class BrowserUtils {
                 })
             .show();
     	
+    }
+
+    public static Resources getResourcesFromExternalRes(Context context) {
+        Resources res = null;
+        Context contextEx = null;
+        try {
+            contextEx = context.createPackageContext(
+                                "com.android.browser.res",
+                                Context.CONTEXT_IGNORE_SECURITY);
+        } catch (Exception e) {
+            Log.e(LOGTAG,"Create Res Apk Failed");
+        }
+
+        if (contextEx != null) {
+            res = contextEx.getResources();
+        } 
+        return res;
+    }
+
+    public static int getResourcesIdFromRes(Resources res, String name, String defType, int resoucesId) {
+        int id = 0;
+        if (res != null) {
+           id = res.getIdentifier(name, defType, "com.android.browser.res");
+        } 
+ 
+        if (id == 0) {
+           id = resoucesId;
+        }
+        Log.e(LOGTAG,"getStringResourcesIdFromRes id is " + id);
+        return id;
     }
 
 }

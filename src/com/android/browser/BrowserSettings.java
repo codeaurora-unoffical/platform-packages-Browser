@@ -57,6 +57,8 @@ import java.util.LinkedList;
 import java.util.WeakHashMap;
 import com.qrd.plugin.feature_query.DefaultQuery;
 import android.util.Log;
+import android.content.res.Resources;
+
 /**
  * Class for managing settings
  */
@@ -198,7 +200,10 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         @Override
         public void run() {
             DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-            mFontSizeMult = metrics.scaledDensity / metrics.density;
+            //because modified system font size as 10 instead of 9,this infect webpage's font size in Browser
+            //In this case, delete fallow code to sovle this problem. In other word, webpage's font size will 
+            //be not infect by system font size change. 
+            //mFontSizeMult = metrics.scaledDensity / metrics.density;
             // the cost of one cached page is ~3M (measured using nytimes.com). For
             // low end devices, we only cache one page. For high end devices, we try
             // to cache more pages, currently choose 5.
@@ -240,13 +245,14 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
                 mPrefs.edit().remove(PREF_TEXT_SIZE).apply();
             }
             //add for cmcc and cu test default homepage start 
-            if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
-                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cmcc);
-            } else if (DefaultQuery.BROWSER_RES.equals("cu")) {
-                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base_cu);
-            } else {
-                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            Resources res = BrowserUtils.getResourcesFromExternalRes(mContext);
+            int idHomepage_base = BrowserUtils.getResourcesIdFromRes(res, "homepage_base", "string", R.string.homepage_base);
+            if (idHomepage_base == R.string.homepage_base) {
+                res = mContext.getResources();
             }
+            //sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            sFactoryResetUrl = res.getString(idHomepage_base);
+            Log.e(LOGTAG, "sFactoryResetUrl is " + sFactoryResetUrl);
             //add for cmcc and cu test default homepage end 
             if (sFactoryResetUrl.indexOf("{CID}") != -1) {
                 sFactoryResetUrl = sFactoryResetUrl.replace("{CID}",

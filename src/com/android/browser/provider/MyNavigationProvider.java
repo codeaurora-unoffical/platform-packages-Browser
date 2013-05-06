@@ -1,6 +1,15 @@
 package com.android.browser.provider;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import com.android.browser.BrowserUtils;
+import com.android.browser.R;
+import com.android.browser.mynavigation.MyNavigationRequestHandler;
+import com.android.browser.mynavigation.MyNavigationUtil;
+import com.android.browser.provider.BrowserProvider2;
+
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -18,12 +27,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
-import com.android.browser.provider.BrowserProvider2;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import com.android.browser.R;
-import com.android.browser.mynavigation.MyNavigationUtil;
-import com.android.browser.mynavigation.MyNavigationRequestHandler;
+import android.content.res.Resources;
 
 public class MyNavigationProvider extends ContentProvider {
 
@@ -196,7 +200,13 @@ public class MyNavigationProvider extends ContentProvider {
             int WebsiteNumber = MyNavigationUtil.WEBSITE_NUMBER;
             for (int i = 0; i < WebsiteNumber; i++) {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
-                Bitmap bm = BitmapFactory.decodeResource(mContext.getResources(), R.raw.my_navigation_add);
+                //get Resouces from external res package(Browser_res)
+                Resources res = BrowserUtils.getResourcesFromExternalRes(mContext);
+                int idRawAdd = BrowserUtils.getResourcesIdFromRes(res, "my_navigation_add", "raw", R.raw.my_navigation_add);
+                if (idRawAdd == R.raw.my_navigation_add) {
+                    res = mContext.getResources();
+                }
+                Bitmap bm = BitmapFactory.decodeResource(res, idRawAdd);
                 bm.compress(Bitmap.CompressFormat.PNG, 100, os);
                 ContentValues values = new ContentValues();
                 values.put(MyNavigationUtil.URL, "ae://" + (i + 1) + "add-fav");

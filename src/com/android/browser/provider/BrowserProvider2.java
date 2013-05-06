@@ -16,6 +16,22 @@
 
 package com.android.browser.provider;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import com.android.browser.BrowserSettings;
+import com.android.browser.BrowserUtils;
+import com.android.browser.R;
+import com.android.browser.UrlUtils;
+import com.android.browser.widget.BookmarkThumbnailWidgetProvider;
+import com.android.common.content.SyncStateContentProviderHelper;
+import com.google.common.annotations.VisibleForTesting;
+import com.qrd.plugin.feature_query.DefaultQuery;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.SearchManager;
@@ -54,22 +70,7 @@ import android.provider.BrowserContract.SyncState;
 import android.provider.ContactsContract.RawContacts;
 import android.provider.SyncStateContract;
 import android.text.TextUtils;
-
-import com.android.browser.BrowserSettings;
-import com.android.browser.R;
-import com.android.browser.UrlUtils;
-import com.android.browser.widget.BookmarkThumbnailWidgetProvider;
-import com.android.common.content.SyncStateContentProviderHelper;
-import com.google.common.annotations.VisibleForTesting;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
 import android.util.Log;
-import com.qrd.plugin.feature_query.DefaultQuery;
 
 public class BrowserProvider2 extends SQLiteContentProvider {
 
@@ -662,20 +663,21 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         }
 
         private void addDefaultBookmarks(SQLiteDatabase db, long parentId) {
-            Resources res = getContext().getResources();
+            //Resources res = getContext().getResources();
             //modified for cmcc and cu test default bookmarks start 
             final CharSequence[] bookmarks;
-            TypedArray preloads;             
-             if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
-                bookmarks= res.getTextArray(R.array.bookmarks_cmcc);
-                preloads = res.obtainTypedArray(R.array.bookmark_preloads_cmcc);
-             } else if (DefaultQuery.BROWSER_RES.equals("cu")) {
-                 bookmarks= res.getTextArray(R.array.bookmarks_cu);
-                 preloads = res.obtainTypedArray(R.array.bookmark_preloads_cu);
-             } else {
-                 bookmarks= res.getTextArray(R.array.bookmarks);
-                 preloads = res.obtainTypedArray(R.array.bookmark_preloads);
-             }
+            TypedArray preloads; 
+            Resources res = BrowserUtils.getResourcesFromExternalRes(getContext());
+            int resBookmarksID = BrowserUtils.getResourcesIdFromRes(res, "bookmarks" , "array", R.array.bookmarks);
+            int resPreloadsID = BrowserUtils.getResourcesIdFromRes(res, "bookmark_preloads" , "array", R.array.bookmark_preloads);
+            if ((resBookmarksID == R.array.bookmarks) && (resPreloadsID == R.array.bookmark_preloads)) {
+                Log.e(LOGTAG,"----------res = browser_res----------");                
+                res = getContext().getResources();
+            }
+            bookmarks = res.getTextArray(resBookmarksID);
+            preloads = res.obtainTypedArray(resPreloadsID);
+            //bookmarks= res.getTextArray(R.array.bookmarks);
+            //preloads = res.obtainTypedArray(R.array.bookmark_preloads);
              //modified for cmcc and cu test default bookmarks end
             int size = bookmarks.length;
             try {
