@@ -60,7 +60,7 @@ public class DownloadSettings extends Activity {
     private static final int downloadRate = (1024*100*60);// Download Rate 100KB/s     
     private final static String LOGTAG = "DownloadSettings";
     private final static int DOWNLOAD_PATH = 0;
-    private boolean isSelectPath = false;
+    private boolean isDownloadStarted = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +123,7 @@ public class DownloadSettings extends Activity {
 
         @Override
         public void onClick(View v) {
-            isSelectPath = true;
+            
 
             //start filemanager for getting download path
             try {
@@ -179,7 +179,8 @@ public class DownloadSettings extends Activity {
             DownloadHandler.startingDownload(DownloadSettings.this,
                                              url, userAgent, contentDisposition,
                                              mimetype, referer, privateBrowsing, contentLength, filename, downloadPath);
-        }
+			isDownloadStarted = true;
+		}
     };
 
     private OnClickListener downloadCancelListener = new OnClickListener() {
@@ -196,7 +197,7 @@ public class DownloadSettings extends Activity {
 
     protected void onPause() {
         super.onPause();
-        if (!isSelectPath) {
+        if (isDownloadStarted) {
             finish();
         }
     }
@@ -207,9 +208,9 @@ public class DownloadSettings extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        isSelectPath = false;
+        
 
-        Log.e(LOGTAG,"isSelectPath value is : "+ isSelectPath);
+        
         if (DOWNLOAD_PATH == requestCode) {
             if (resultCode == Activity.RESULT_OK && intent != null) {
                 downloadPath = intent.getStringExtra("result_dir_sel");   
