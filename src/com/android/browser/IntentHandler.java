@@ -98,8 +98,10 @@ public class IntentHandler {
                 || Intent.ACTION_WEB_SEARCH.equals(action)) {
 
             String url = intent.getStringExtra(SearchManager.QUERY);
-            if (url != null && mController != null) {
-                mController.shouldOverrideUrlLoading(current, mController.getTabControl().getCurrentWebView(), url);
+            if (url != null && mController != null
+                && mController.shouldOverrideUrlLoading(current, 
+                    mController.getTabControl().getCurrentWebView(), url)){
+                return;
             }
 
             // If this was a search request (e.g. search query directly typed into the address bar),
@@ -108,7 +110,22 @@ public class IntentHandler {
                 return;
             }
 
-            UrlData urlData = getUrlDataFromIntent(intent);
+            //modified fallowing code for creating bookmark's shortcut whose
+            // url starts with "content://" into launcher, when click the
+            // bookmark's shortcut, it will not be open the "content://.." tab,
+            //but open a web search tab about "content://..." string 
+            //Bug fix:when open the bookmark's shortcut starts with string 
+            //"content://", open it ,not take it as a quary string  
+            UrlData urlData = null;
+            if (intent.getData() != null 
+                && Intent.ACTION_VIEW.equals(intent.getAction())
+                && intent.getData().toString().startsWith("content://")) {
+                urlData = new UrlData(intent.getData().toString());
+            } else {
+                urlData = IntentHandler.getUrlDataFromIntent(intent);
+            }
+//          UrlData urlData = getUrlDataFromIntent(intent);
+
             if (urlData.isEmpty()) {
                 urlData = new UrlData(mSettings.getHomePage());
             }
