@@ -771,7 +771,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         return mPrefs.getString(PREF_DEFAULT_TEXT_ENCODING, null);
     }
     
-	public String getDownloadPathFromSettings() {
+    public String getDownloadPathFromSettings() {
         return mPrefs.getString(PREF_DOWNLOAD_PATH_SETTINGS, DownloadHandler.getDefaultDownloadPath(mContext));
     }
     
