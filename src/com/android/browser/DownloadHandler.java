@@ -91,6 +91,8 @@ public class DownloadHandler {
             int fileType = MediaFile.getFileTypeForMimeType(mimetype);
             if ("http".equalsIgnoreCase(scheme) &&
                 (mimetype.startsWith("video/") ||mimetype.startsWith("audio/") ||
+                 mimetype.equalsIgnoreCase("application/x-mpegurl") ||
+                 mimetype.equalsIgnoreCase("application/vnd.apple.mpegurl") ||
                  MediaFile.isAudioFileType(fileType) ||
                  MediaFile.isVideoFileType(fileType))) {
 
