@@ -314,12 +314,13 @@ public class BrowserBookmarksPage extends Fragment implements View.OnCreateConte
         BookmarkContextMenuInfo info = (BookmarkContextMenuInfo) menuInfo;
         BrowserBookmarksAdapter adapter = getChildAdapter(info.groupPosition);
         Cursor cursor = adapter.getItem(info.childPosition);
+        String url = cursor.getString(BookmarksLoader.COLUMN_INDEX_URL);
         if (!canEdit(cursor)) {
             return;
         }
         boolean isFolder
                 = cursor.getInt(BookmarksLoader.COLUMN_INDEX_IS_FOLDER) != 0;
-
+        
         final Activity activity = getActivity();
         MenuInflater inflater = activity.getMenuInflater();
         inflater.inflate(R.menu.bookmarkscontext, menu);
@@ -329,6 +330,13 @@ public class BrowserBookmarksPage extends Fragment implements View.OnCreateConte
             menu.setGroupVisible(R.id.BOOKMARK_CONTEXT_MENU, true);
             if (mDisableNewWindow) {
                 menu.findItem(R.id.new_window_context_menu_id).setVisible(false);
+            }
+            //because when copy the url which start with string "content://"
+            //in Browser Bookmarks Page by long press the bookmark item,
+            //the Browser will be stoped. So we set the "copy url" item 
+            //in context menu list invisible to solve this problem
+            if ((url != null) && (url.startsWith("content://")) ) {
+                menu.findItem(R.id.copy_url_context_menu_id).setVisible(false);
             }
         }
         BookmarkItem header = new BookmarkItem(activity);

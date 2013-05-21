@@ -656,6 +656,14 @@ public class Controller
         mConfigChanged = true;
         // update the menu in case of a locale change
         mActivity.invalidateOptionsMenu();
+        //bug fix for pop up option menu list then rotate screen 
+        //the menu item is not work
+        //modified when change orientation, close the option menu
+        //list to fix this bug temp.
+        if (mOptionsMenuOpen) {
+            mActivity.closeOptionsMenu();
+        }
+
         if (mPageDialogsHandler != null) {
             mPageDialogsHandler.onConfigurationChanged(config);
         }
