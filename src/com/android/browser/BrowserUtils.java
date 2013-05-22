@@ -30,6 +30,7 @@ public class BrowserUtils {
     private static final String LOGTAG = "BrowserUtils";
     public static final int filenameMaxLength = 32;
     public static final int addressMaxLength = 2048;
+	public static AlertDialog.Builder mAlertDialog=null;
     public static void lengthFilter( final EditText editText, 
                                      final int max_length, final String err_msg) {
 
@@ -109,9 +110,12 @@ public class BrowserUtils {
     }
 
     private static void showWarningDialog(final Context context, int max_length) {
+		if(mAlertDialog!=null)
+			return ;
+		
 
-         new AlertDialog.Builder(context)
-            .setTitle(R.string.browser_max_input_title)
+         mAlertDialog=new AlertDialog.Builder(context);
+         mAlertDialog.setTitle(R.string.browser_max_input_title)
             .setIcon(android.R.drawable.ic_dialog_info)
             .setMessage(context.getString(R.string.browser_max_input, max_length))
             .setPositiveButton(R.string.ok, 
@@ -120,11 +124,17 @@ public class BrowserUtils {
                     return;
                 }
                 })
-            .show();
+            .show()
+            .setOnDismissListener(new DialogInterface.OnDismissListener(){
+				public void onDismiss(DialogInterface dialog){
+					Log.w("BrowserUtils", "onDismiss");
+					mAlertDialog=null;
+                    return;
+				}
+                });
     	
     }
-
-    public static Resources getResourcesFromExternalRes(Context context) {
+public static Resources getResourcesFromExternalRes(Context context) {
         Resources res = null;
         Context contextEx = null;
         try {
