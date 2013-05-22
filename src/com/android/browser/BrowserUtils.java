@@ -134,5 +134,34 @@ public class BrowserUtils {
                 });
     	
     }
+public static Resources getResourcesFromExternalRes(Context context) {
+        Resources res = null;
+        Context contextEx = null;
+        try {
+            contextEx = context.createPackageContext(
+                                "com.android.browser.res",
+                                Context.CONTEXT_IGNORE_SECURITY);
+        } catch (Exception e) {
+            Log.e(LOGTAG,"Create Res Apk Failed");
+        }
+
+        if (contextEx != null) {
+            res = contextEx.getResources();
+        } 
+        return res;
+    }
+
+    public static int getResourcesIdFromRes(Resources res, String name, String defType, int resoucesId) {
+        int id = 0;
+        if (res != null) {
+           id = res.getIdentifier(name, defType, "com.android.browser.res");
+        } 
+ 
+        if (id == 0) {
+           id = resoucesId;
+        }
+        Log.e(LOGTAG,"getStringResourcesIdFromRes id is " + id);
+        return id;
+    }
 
 }
