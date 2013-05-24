@@ -309,18 +309,17 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         settings.setMediaPlaybackRequiresUserGesture(!videoPlayback());
 
         String ua = mCustomUserAgents.get(settings);
-        Log.e(LOGTAG,"before setting user agent ua is" + ua);
-        Log.e(LOGTAG,"before setting user agent DefaultQuery.BROWSER_USER_AGENT is" + DefaultQuery.BROWSER_USER_AGENT);
         if (ua != null) {
             settings.setUserAgentString(ua);
         } else {
             //modified for cmcc and cu test about user agent string start
             if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
                 settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
-                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT");
-            } else {
+            } else if(getUserAgent() == 0 &&DefaultQuery.BROWSER_RES.equals("cu")){
+            	String UA = Build.MODEL.replace(" ","")+"/1.0 Linux/2.6 Android/4.2.2 Browser/AppleWebKit534.30 Profile/MIDP-1.0 Configuration/CLDC-1.0";
+				settings.setUserAgentString(UA);
+            }else {
                 settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
-                Log.e(LOGTAG,"setting user agent as null");
             }
             //modified for cmcc and cu test about user agent string end
         }
@@ -599,10 +598,11 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             //modified for cmcc and cu test about user agent string start
             if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
                 settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
-                Log.e(LOGTAG,"setting user agent as DefaultQuery.BROWSER_USER_AGENT in toggleDesktopUseragent");
-            } else {
+            } else if(getUserAgent() == 0 &&DefaultQuery.BROWSER_RES.equals("cu")){
+            	String UA = Build.MODEL.replace(" ","")+"/1.0 Linux/2.6 Android/4.2.2 Browser/AppleWebKit534.30 Profile/MIDP-1.0 Configuration/CLDC-1.0";
+				settings.setUserAgentString(UA);
+            }else {
                 settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
-                Log.e(LOGTAG,"setting user agent as null in toggleDesktopUseragent");
             }
             //modified for cmcc and cu test about user agent string end
         } else {
