@@ -54,6 +54,8 @@ public class AdvancedPreferencesFragment extends PreferenceFragment
 
         if (DefaultQuery.BROWSER_RES.equals("cmcc")) {
             addPreferencesFromResource(R.xml.advanced_preferences_cmcc);
+        } else if (DefaultQuery.BROWSER_RES.equals("cu")) {
+            addPreferencesFromResource(R.xml.advanced_preferences_cu);
         } else {
             addPreferencesFromResource(R.xml.advanced_preferences);
         }
