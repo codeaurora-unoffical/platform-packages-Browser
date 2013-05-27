@@ -21,7 +21,7 @@
     <com.android.browser.search.SearchEnginePreference
             android:key="search_engine"
             android:title="@string/pref_content_search_engine"
-            android:defaultValue="google"
+            android:defaultValue="@string/default_search_engine_value"
             android:summary="@string/pref_content_search_engine_summary"
             android:dialogTitle="@string/pref_content_search_engine" />
 
