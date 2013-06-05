@@ -316,7 +316,7 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             if (getUserAgent() == 0 && !DefaultQuery.BROWSER_USER_AGENT.equals("null")) {
                 settings.setUserAgentString(DefaultQuery.BROWSER_USER_AGENT);
             } else if(getUserAgent() == 0 &&DefaultQuery.BROWSER_RES.equals("cu")){
-            	String UA = Build.MODEL.replace(" ","")+"/1.0 Linux/2.6 Android/4.2.2 Browser/AppleWebKit534.30 Profile/MIDP-1.0 Configuration/CLDC-1.0";
+            	String UA = Build.MODEL.replace(" ","")+"/1.0 Linux/3.4.0 Android/4.2.2 Browser/AppleWebKit534.30 Profile/MIDP-1.0 Configuration/CLDC-1.0";
 				settings.setUserAgentString(UA);
             }else {
                 settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
