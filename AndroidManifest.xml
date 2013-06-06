@@ -98,6 +98,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="file" />
+                <data android:scheme="content" /> 
                 <data android:mimeType="text/html"/>
                 <data android:mimeType="application/xhtml+xml"/>
                 <data android:mimeType="application/vnd.wap.xhtml+xml"/>
@@ -286,6 +287,11 @@
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>
             </intent-filter>
+        </receiver>
+        <receiver android:name=".ShutDownReceiver">
+            		<intent-filter>
+                	<action android:name="android.intent.action.ACTION_SHUTDOWN"/>
+            		</intent-filter>
         </receiver>
 
         <!-- For custom home pages (like most visited) -->

@@ -26,9 +26,20 @@ Each value in the string-array is the name of a value in all_search_engines.xml
     <item>yahoo</item>
     <item>bing</item>
   </string-array>
+  <string name="default_search_engine_value">google</string>
 
   <string-array name="search_engines_cmcc" translatable="false">
     <item>baidu_en</item>
     <item>cmcc</item>
   </string-array>
+  <string name="default_search_engine_value_cmcc">baidu</string>
+
+  <string-array name="search_engines_cu" translatable="false">
+    <item>baidu_en</item>
+    <item>google</item>
+    <item>yahoo</item>
+    <item>bing</item>
+  </string-array>
+  <string name="default_search_engine_value_cu">baidu</string>
+
 </resources>
