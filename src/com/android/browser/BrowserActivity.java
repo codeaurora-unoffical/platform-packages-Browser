@@ -35,6 +35,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 
+import com.android.browser.search.DefaultSearchEngine;
+import com.android.browser.search.SearchEngine;
 import com.android.browser.stub.NullController;
 import com.google.common.annotations.VisibleForTesting;
 
@@ -65,12 +67,16 @@ public class BrowserActivity extends Activity {
             return;
         }
 
-        // If this was a web search request, pass it on to the default web
-        // search provider and finish this activity.
-        if (IntentHandler.handleWebSearchIntent(this, null, getIntent())) {
+        // If this was a web search request, pass it on to web search provider.
+        // If the search engine is DefaultSearchEngine, we finish this activity.
+        // Otherwise, should keep and not finish this activity.
+        SearchEngine searchEngine = BrowserSettings.getInstance().getSearchEngine();
+        boolean result = IntentHandler.handleWebSearchIntent(this, null, getIntent());
+        if (result && (searchEngine instanceof DefaultSearchEngine)) {
             finish();
             return;
         }
+
         mController = createController();
 
         Intent intent = (icicle == null) ? getIntent() : null;
@@ -101,6 +107,9 @@ public class BrowserActivity extends Activity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        if (LOGV_ENABLED) {
+            Log.v(LOGTAG, "BrowserActivity.onNewIntent: this=" + this);
+        }
         if (shouldIgnoreIntents()) return;
         if (ACTION_RESTART.equals(intent.getAction())) {
             Bundle outState = new Bundle();
