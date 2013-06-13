@@ -34,10 +34,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.webkit.JavascriptInterface;
 
+import com.android.browser.UI.ComboViews;
 import com.android.browser.search.DefaultSearchEngine;
 import com.android.browser.search.SearchEngine;
 import com.android.browser.stub.NullController;
+
 import com.google.common.annotations.VisibleForTesting;
 
 public class BrowserActivity extends Activity {
@@ -53,6 +56,7 @@ public class BrowserActivity extends Activity {
     private final static boolean LOGV_ENABLED = Browser.LOGV_ENABLED;
 
     private ActivityController mController = NullController.INSTANCE;
+    private Handler mHandler = new Handler();
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -331,4 +335,29 @@ public class BrowserActivity extends Activity {
                 super.dispatchGenericMotionEvent(ev);
     }
 
+    // add for CT homepage feature
+    @JavascriptInterface
+    public void loadBookmarks() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mController instanceof Controller) {
+                    ((Controller)mController).bookmarksOrHistoryPicker(ComboViews.Bookmarks);
+                }
+            }
+        });
+    }
+
+    // add for CT homepage feature
+    @JavascriptInterface
+    public void loadHistory() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mController instanceof Controller) {
+                    ((Controller)mController).bookmarksOrHistoryPicker(ComboViews.History);
+                }
+            }
+        });
+    }
 }
