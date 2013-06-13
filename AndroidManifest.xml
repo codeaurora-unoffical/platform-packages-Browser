@@ -204,7 +204,7 @@
         </activity>
 
         <activity android:name="AddBookmarkPage" android:label="Save bookmark"
-                  android:theme="@style/DialogWhenLarge"
+                  android:theme="@style/DialogWhenLarge_bookmark"
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:windowSoftInputMode="adjustResize">
             <intent-filter>

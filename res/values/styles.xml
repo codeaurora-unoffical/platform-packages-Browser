@@ -29,6 +29,9 @@
     <style name="DialogWhenLarge" parent="@android:style/Theme.Holo.DialogWhenLarge" >
         <item name="android:windowActionBar">false</item>
     </style>
+    <style name="DialogWhenLarge_bookmark" parent="@android:style/Theme.Holo.DialogWhenLarge" >
+        <item name="android:windowActionBar">true</item>
+    </style>
     <style name="BookmarkTheme" parent="@android:Theme.Holo">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
