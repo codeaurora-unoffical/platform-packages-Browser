@@ -54,7 +54,9 @@ import com.android.browser.search.SearchEngine;
 import com.android.browser.search.SearchEngines;
 
 import java.io.InputStream;
+import java.lang.Class;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -94,6 +96,8 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             FROYO_USERAGENT,
             HONEYCOMB_USERAGENT,
     };
+
+    private static final String TAG = "BrowserSettings";
 
     // The minimum min font size
     // Aka, the lower bounds for the min font size range
@@ -353,7 +357,18 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         settings.setWebGLEnabled(isWebGLAvailable() && isWebGLEnabled());
         settings.setMediaPlaybackRequiresUserGesture(!videoPlayback());
 
-        String ua = mCustomUserAgents.get(settings);
+        // add for CU & CT useragent feature
+        String ua = null;
+        try {
+            Class c = Class.forName("com.qrd.useragent.UserAgentHandler");
+            Object cObj = c.newInstance();
+            Method m = c.getDeclaredMethod("getUAString", Context.class);
+            ua = (String)m.invoke(cObj, mContext);
+        } catch (Exception e) {
+            Log.e(TAG, "plug in Load failed, err " + e);
+            ua = mCustomUserAgents.get(settings);
+        }
+
         if (ua != null) {
             settings.setUserAgentString(ua);
         } else {
