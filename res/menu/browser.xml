@@ -102,6 +102,9 @@
             android:icon="@drawable/ic_settings_holo_dark"
             android:alphabeticShortcut="p" />
         <item
+            android:id="@+id/about_menu_id"
+            android:title="@string/about" />
+        <item
             android:id="@+id/exit_menu_id"
             android:title="@string/exit" />
         <!-- followings are debug only -->

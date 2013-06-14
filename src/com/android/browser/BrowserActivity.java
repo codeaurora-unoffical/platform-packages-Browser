@@ -17,6 +17,7 @@
 package com.android.browser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.android.browser.UI.ComboViews;
 import com.android.browser.search.DefaultSearchEngine;
@@ -247,6 +250,21 @@ public class BrowserActivity extends Activity {
                         android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 }, 300);
+            } else if (item.getItemId() == R.id.about_menu_id) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.about);
+                builder.setCancelable(true);
+                String ua = "";
+                final WebView current = getController().getCurrentWebView();
+                if (current != null) {
+                    final WebSettings s = current.getSettings();
+                    if (s != null) {
+                        ua = s.getUserAgentString();
+                    }
+                }
+                builder.setMessage("Agent:" + ua);
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.create().show();
             }
             return super.onOptionsItemSelected(item);
         }
