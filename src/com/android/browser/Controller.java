@@ -124,6 +124,7 @@ public class Controller
     static final int UPDATE_BOOKMARK_THUMBNAIL = 108;
 
     private static final int OPEN_BOOKMARKS = 201;
+    private static final int OPEN_MENU = 202;
 
     private static final int EMPTY_MENU = -1;
 
@@ -545,6 +546,12 @@ public class Controller
                             updateScreenshot(tab);
                         }
                         break;
+
+                    case OPEN_MENU:
+                        if (!mOptionsMenuOpen && mActivity != null) {
+                            mActivity.openOptionsMenu();
+                        }
+                        break;
                 }
             }
         };
@@ -617,6 +624,10 @@ public class Controller
             mPageDialogsHandler.onConfigurationChanged(config);
         }
         mUi.onConfigurationChanged(config);
+        if (mOptionsMenuOpen) {
+            mActivity.closeOptionsMenu();
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(OPEN_MENU), 100);
+        }
     }
 
     @Override
