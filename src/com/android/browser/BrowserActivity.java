@@ -36,6 +36,10 @@ import android.view.Window;
 
 import com.android.browser.stub.NullController;
 import com.google.common.annotations.VisibleForTesting;
+import android.content.IntentFilter;
+import com.android.browser.ShutDownReceiver;
+
+
 
 public class BrowserActivity extends Activity {
 
@@ -50,6 +54,7 @@ public class BrowserActivity extends Activity {
     private final static boolean LOGV_ENABLED = Browser.LOGV_ENABLED;
 
     private ActivityController mController = NullController.INSTANCE;
+	private ShutDownReceiver mShutDownReceiver=null;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -74,6 +79,12 @@ public class BrowserActivity extends Activity {
 
         Intent intent = (icicle == null) ? getIntent() : null;
         mController.start(intent);
+
+
+		IntentFilter shutdownFilter = new IntentFilter(
+                "android.intent.action.ACTION_SHUTDOWN");
+		mShutDownReceiver=new ShutDownReceiver();
+		registerReceiver(mShutDownReceiver, shutdownFilter);
     }
 
     public static boolean isTablet(Context context) {
