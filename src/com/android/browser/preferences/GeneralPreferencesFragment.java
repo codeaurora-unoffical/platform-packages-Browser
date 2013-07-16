@@ -41,6 +41,7 @@ import com.android.browser.PreferenceKeys;
 import com.android.browser.R;
 import com.android.browser.UrlUtils;
 import com.android.browser.homepages.HomeProvider;
+import android.content.res.Configuration;
 
 public class GeneralPreferencesFragment extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
@@ -58,7 +59,8 @@ public class GeneralPreferencesFragment extends PreferenceFragment
 
     String[] mChoices, mValues;
     String mCurrentPage;
-
+    //add for homepage OTHER option 
+    private AlertDialog dialog = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +125,8 @@ public class GeneralPreferencesFragment extends PreferenceFragment
         editText.setSelectAllOnFocus(true);
         editText.setSingleLine(true);
         editText.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
-        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+        //modified for homepage OTHER option
+        dialog = new AlertDialog.Builder(getActivity())
                 .setView(editText)
                 .setPositiveButton(android.R.string.ok, new OnClickListener() {
                     @Override
@@ -204,6 +207,16 @@ public class GeneralPreferencesFragment extends PreferenceFragment
         super.onResume();
 
         refreshUi();
+    }
+
+    //dismiss the dialog for homepage other option
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (dialog != null) {
+            Log.w("GeneralPreferencesFragment", " change orientation then call onDestroy");
+            dialog.dismiss();
+        }
     }
 
     void refreshUi() {
