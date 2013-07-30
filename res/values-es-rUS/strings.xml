@@ -124,7 +124,7 @@
     <string name="clear" msgid="7070043081700011461">"Eliminar"</string>
     <string name="replace" msgid="4843033491070384047">"Sustituir"</string>
     <string name="browser_bookmarks_page_bookmarks_text" msgid="6787605028726162673">"Marcadores"</string>
-    <string name="menu_preferences" msgid="6709237687234102240">"Config."</string>
+    <string name="menu_preferences" msgid="6709237687234102240">"Configuraciones"</string>
     <string name="pref_content_title" msgid="3834107397725342174">"Contenido de la página"</string>
     <string name="pref_allow_apptabs" msgid="1325989799080202871">"Abrir varias pestañas por aplicación"</string>
     <string name="pref_content_load_images" msgid="2125616852957377561">"Cargar imágenes"</string>

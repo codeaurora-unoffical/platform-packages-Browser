@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="pref_privacy_clear_form_data_summary" >Limpar todos os dados do formulário salvo</string>
+    <string name="pref_privacy_clear_form_data_summary" >Limpar dados de formulários</string>
     <string name="pref_zoom_on_double_tap" >Zoom em toque duplo</string>
     <string name="security_warning" >Aviso de segurança</string>
     <string name="new_incognito_tab" >Nova guia anônima</string>
     <string name="menu_view_download" >Downloads</string>
     <string name="pref_privacy_cookies_title" >Cookies</string>
     <string name="progress_dialog_setting_wallpaper" >Definindo papel de parede...</string>
-    <string name="pref_security_save_form_data_summary" >Lembrar os dados que digitei nos formulários para uso posterior.</string>
+    <string name="pref_security_save_form_data_summary" >Lembrar dados de formulários para uso futuro</string>
     <string name="pref_inverted_contrast" >Contraste</string>
     <string name="import_bookmarks_dialog_import" >Adicionar favoritos do Android aos favoritos de <xliff:g id="GOOGLE_ACCOUNT">%s</xliff:g></string>
     <string name="pref_content_autofit_summary" >Formatar páginas da web para se ajustarem à tela</string>
@@ -137,7 +137,7 @@
     <string name="import_bookmarks_dialog_add" >Adicionar favoritos à Conta do Google</string>
     <string name="tab_most_visited" >Mais visitados</string>
     <string name="too_many_subwindows_dialog_message" >Apenas um pop-up pode ser aberto por vez.</string>
-    <string name="menu_preferences" >Config.</string>
+    <string name="menu_preferences" >Configurações</string>
     <string name="import_bookmarks_wizard_done" >Concluído</string>
     <string name="contextmenu_openlink_newwindow_background" >Abrir em uma nova guia em segundo plano</string>
     <string name="pref_default_zoom_dialogtitle" >Zoom padrão</string>
