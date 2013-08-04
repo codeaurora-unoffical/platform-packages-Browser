@@ -223,7 +223,7 @@
     <string name="autofill_setup_dialog_message" >O navegador pode preencher automaticamente formulários da web como este. Deseja configurar o preenchimento automático de texto?</string>
     <string name="pref_privacy_security_title" >Privacidade e segurança</string>
     <string name="import_bookmarks_dialog_title" >Sincronizar com Conta do Google</string>
-    <string name="pref_privacy_clear_form_data" >Limpar dados de form.</string>
+    <string name="pref_privacy_clear_form_data" >Limpar dados de formulários.</string>
     <string name="browser_history" >Páginas visitadas recentemente</string>
     <string name="pref_extras_title" >Avançado</string>
     <string name="pref_min_font_size" >Tamanho mínimo da fonte</string>
@@ -293,7 +293,7 @@
     <string name="search_the_web" >Pesquisar na web</string>
     <string name="browser_bookmarks_page_bookmarks_text" >Favoritos</string>
     <string name="bookmark_list_view" >Lista</string>
-    <string name="pref_security_save_form_data" >Lembrar dados de form.</string>
+    <string name="pref_security_save_form_data" >Lembrar dados de formulários.</string>
     <string name="pref_security_show_security_warning" >Avisos de segurança</string>
     <string name="pref_privacy_clear_geolocation_access" >Limpar acesso ao local</string>
     <string name="pref_extras_reset_default_dlg" >Reverter as configurações para os valores padrão?</string>
