@@ -29,5 +29,19 @@
         <item>@raw/thumb_weatherchannel</item>
         <item>@raw/favicon_bbc</item>
         <item>@raw/thumb_bbc</item>
+        <item>@raw/favicon_item1</item>
+        <item>@raw/thumb_item1</item>
+        <item>@raw/favicon_item2</item>
+        <item>@raw/thumb_item2</item>
+        <item>@raw/favicon_item3</item>
+        <item>@raw/thumb_item3</item>
+        <item>@raw/favicon_item4</item>
+        <item>@raw/thumb_item4</item>
+        <item>@raw/favicon_item5</item>
+        <item>@raw/thumb_item5</item>
+        <item>@raw/favicon_item6</item>
+        <item>@raw/thumb_item6</item>
+        <item>@raw/favicon_item7</item>
+        <item>@raw/thumb_item7</item>
     </array>
 </resources>

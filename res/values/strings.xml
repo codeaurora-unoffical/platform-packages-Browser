@@ -827,6 +827,20 @@
         <item>http://www.weather.com/</item>
         <item>BBC</item>
         <item>http://www.bbc.co.uk/</item>
+        <item>@string/bookmark_name_item1</item>
+        <item>@string/bookmark_url_item1</item>
+        <item>@string/bookmark_name_item2</item>
+        <item>@string/bookmark_url_item2</item>
+        <item>@string/bookmark_name_item3</item>
+        <item>@string/bookmark_url_item3</item>
+        <item>@string/bookmark_name_item4</item>
+        <item>@string/bookmark_url_item4</item>
+        <item>@string/bookmark_name_item5</item>
+        <item>@string/bookmark_url_item5</item>
+        <item>@string/bookmark_name_item6</item>
+        <item>@string/bookmark_url_item6</item>
+        <item>@string/bookmark_name_item7</item>
+        <item>@string/bookmark_url_item7</item>
     </string-array>
 
     <!-- Bookmark name for Picasa website -->
