@@ -2830,6 +2830,7 @@ public class Controller
             boolean useCurrent) {
         Tab tab = null;
         if (mTabControl.canCreateNewTab()) {
+            incognito = !mActivity.getResources().getBoolean(R.bool.def_history_needed);
             tab = mTabControl.createNewTab(incognito);
             addTab(tab);
             if (setActive) {
