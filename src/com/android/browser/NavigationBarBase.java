@@ -16,14 +16,18 @@
 package com.android.browser;
 
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,12 +35,18 @@ import android.view.View.OnFocusChangeListener;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.browser.UrlInputView.UrlInputListener;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 
 public class NavigationBarBase extends LinearLayout implements
         OnClickListener, UrlInputListener, OnFocusChangeListener,
         TextWatcher {
+
+    private final static String TAG = "NavigationBarBase";
 
     protected BaseUi mBaseUi;
     protected TitleBar mTitleBar;
@@ -158,7 +168,16 @@ public class NavigationBarBase extends LinearLayout implements
     public void onAction(String text, String extra, String source) {
         stopEditingUrl();
         if (UrlInputView.TYPED.equals(source)) {
-            String url = UrlUtils.smartUrlFilter(text, false);
+            String url = null;
+            boolean wap2estore = SystemProperties.getBoolean(
+                    "persist.env.browser.wap2estore", false);
+            if ((wap2estore && isEstoreTypeUrl(text))
+                || isRtspTypeUrl(text)) {
+                url = text;
+            } else {
+                url = UrlUtils.smartUrlFilter(text, false);
+            }
+
             Tab t = mBaseUi.getActiveTab();
             // Only shortcut javascript URIs for now, as there is special
             // logic in UrlHandler for other schemas
@@ -166,6 +185,19 @@ public class NavigationBarBase extends LinearLayout implements
                 mUiController.loadUrl(t, url);
                 setDisplayTitle(text);
                 return;
+            }
+
+            // add for carrier wap2estore feature
+            if (url != null && t != null && wap2estore && isEstoreTypeUrl(url)) {
+                handleEstoreTypeUrl(url);
+                setDisplayTitle(text);
+                return;
+            }
+            // add for rtsp scheme feature
+            if (url != null && t != null && isRtspTypeUrl(url)) {
+                if (handleRtspTypeUrl(url)) {
+                    return;
+                }
             }
         }
         Intent i = new Intent();
@@ -182,6 +214,78 @@ public class NavigationBarBase extends LinearLayout implements
         }
         mUiController.handleNewIntent(i);
         setDisplayTitle(text);
+    }
+
+    private boolean isEstoreTypeUrl(String url) {
+        String utf8Url = null;
+        try {
+            utf8Url = new String(url.getBytes("UTF-8"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "err " + e);
+        }
+        if (utf8Url != null && utf8Url.startsWith("estore:")) {
+            return true;
+        }
+        return false;
+    }
+
+    private void handleEstoreTypeUrl(String url) {
+        String utf8Url = null, finalUrl = null;
+        try {
+            utf8Url = new String(url.getBytes("UTF-8"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "err " + e);
+        }
+        if (utf8Url != null) {
+            finalUrl = utf8Url;
+        } else {
+            finalUrl = url;
+        }
+        if (finalUrl.replaceFirst("estore:", "").length() > 256) {
+            Toast.makeText(mContext, R.string.estore_url_warning, Toast.LENGTH_LONG).show();
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(finalUrl));
+        try {
+            mContext.startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            String downloadUrl = mContext.getResources().getString(R.string.estore_homepage);
+            mUiController.loadUrl(mBaseUi.getActiveTab(), downloadUrl);
+            Toast.makeText(mContext, R.string.download_estore_app, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean isRtspTypeUrl(String url) {
+        String utf8Url = null;
+        try {
+            utf8Url = new String(url.getBytes("UTF-8"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "err " + e);
+        }
+        if (utf8Url != null && utf8Url.startsWith("rtsp://")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleRtspTypeUrl(String url) {
+        Intent intent;
+        // perform generic parsing of the URI to turn it into an Intent.
+        try {
+            intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+        } catch (URISyntaxException ex) {
+            Log.w("Browser", "Bad URI " + url + ": " + ex.getMessage());
+            return false;
+        }
+
+        try {
+            mContext.startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            Log.w("Browser", "No resolveActivity " + url);
+            return false;
+        }
+        return true;
     }
 
     @Override

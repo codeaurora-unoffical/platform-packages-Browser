@@ -17,6 +17,7 @@
 package com.android.browser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -47,6 +48,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.os.SystemProperties;
 import android.preference.PreferenceActivity;
 import android.provider.Browser;
 import android.provider.BrowserContract;
@@ -124,6 +126,7 @@ public class Controller
     static final int UPDATE_BOOKMARK_THUMBNAIL = 108;
 
     private static final int OPEN_BOOKMARKS = 201;
+    private static final int OPEN_MENU = 202;
 
     private static final int EMPTY_MENU = -1;
 
@@ -515,7 +518,7 @@ public class Controller
                             case R.id.download_context_menu_id:
                                 DownloadHandler.onDownloadStartNoStream(
                                         mActivity, url, view.getSettings().getUserAgentString(),
-                                        null, null, null, view.isPrivateBrowsingEnabled());
+                                        null, null, null, view.isPrivateBrowsingEnabled(), 0);
                                 break;
                         }
                         break;
@@ -543,6 +546,12 @@ public class Controller
                         Tab tab = (Tab) msg.obj;
                         if (tab != null) {
                             updateScreenshot(tab);
+                        }
+                        break;
+
+                    case OPEN_MENU:
+                        if (!mOptionsMenuOpen && mActivity != null ) {
+                            mActivity.openOptionsMenu();
                         }
                         break;
                 }
@@ -613,6 +622,10 @@ public class Controller
         mConfigChanged = true;
         // update the menu in case of a locale change
         mActivity.invalidateOptionsMenu();
+        if (mOptionsMenuOpen) {
+            mActivity.closeOptionsMenu();
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(OPEN_MENU), 100);
+        }
         if (mPageDialogsHandler != null) {
             mPageDialogsHandler.onConfigurationChanged(config);
         }
@@ -1037,7 +1050,7 @@ public class Controller
             long contentLength) {
         WebView w = tab.getWebView();
         boolean ret = DownloadHandler.onDownloadStart(mActivity, url, userAgent,
-                contentDisposition, mimetype, referer, w.isPrivateBrowsingEnabled());
+                contentDisposition, mimetype, referer, w.isPrivateBrowsingEnabled(), contentLength);
         if (ret == false && w.copyBackForwardList().getSize() == 0) {
             // This Tab was opened for the sole purpose of downloading a
             // file. Remove it.
@@ -1189,8 +1202,10 @@ public class Controller
                             ComboViewActivity.EXTRA_OPEN_ALL);
                     Tab parent = getCurrentTab();
                     for (String url : urls) {
-                        parent = openTab(url, parent,
-                                !mSettings.openInBackground(), true);
+                        if (url != null) {
+                            parent = openTab(url, parent,
+                                    !mSettings.openInBackground(), true);
+                        }
                     }
                 } else if (intent.hasExtra(ComboViewActivity.EXTRA_OPEN_SNAPSHOT)) {
                     long id = intent.getLongExtra(
@@ -1509,13 +1524,11 @@ public class Controller
     public void updateMenuState(Tab tab, Menu menu) {
         boolean canGoBack = false;
         boolean canGoForward = false;
-        boolean isHome = false;
         boolean isDesktopUa = false;
         boolean isLive = false;
         if (tab != null) {
             canGoBack = tab.canGoBack();
             canGoForward = tab.canGoForward();
-            isHome = mSettings.getHomePage().equals(tab.getUrl());
             isDesktopUa = mSettings.hasDesktopUseragent(tab.getWebView());
             isLive = !tab.isSnapshot();
         }
@@ -1523,7 +1536,6 @@ public class Controller
         back.setEnabled(canGoBack);
 
         final MenuItem home = menu.findItem(R.id.homepage_menu_id);
-        home.setEnabled(!isHome);
 
         final MenuItem forward = menu.findItem(R.id.forward_menu_id);
         forward.setEnabled(canGoForward);
@@ -1555,7 +1567,10 @@ public class Controller
         uaSwitcher.setChecked(isDesktopUa);
         menu.setGroupVisible(R.id.LIVE_MENU, isLive);
         menu.setGroupVisible(R.id.SNAPSHOT_MENU, !isLive);
-        menu.setGroupVisible(R.id.COMBO_MENU, false);
+
+        // history and snapshots item are the members of COMBO menu group,
+        // so if show history item, only make snapshots item invisible.
+        menu.findItem(R.id.snapshots_menu_id).setVisible(false);
 
         mUi.updateMenuState(tab, menu);
     }
@@ -1634,6 +1649,13 @@ public class Controller
                 }
                 closeCurrentTab();
                 break;
+
+            case R.id.exit_menu_id:
+                String ret = SystemProperties.get("persist.debug.browsermonkeytest");
+                if (ret != null && ret.equals("enable"))
+                    break;
+                showExitDialog(mActivity);
+                return true;
 
             case R.id.homepage_menu_id:
                 Tab current = mTabControl.getCurrentTab();
@@ -1813,6 +1835,35 @@ public class Controller
     private void goLive() {
         Tab t = getCurrentTab();
         t.loadUrl(t.getUrl(), null);
+    }
+
+    private void showExitDialog(final Activity activity) {
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.exit_browser_title)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setMessage(R.string.exit_browser_msg)
+                .setNegativeButton(R.string.exit_minimize, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.moveTaskToBack(true);
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(R.string.exit_quit, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // TODO Auto-generated method stub
+                                mCrashRecoveryHandler.clearState(true);
+                                int pid = android.os.Process.myPid();
+                                android.os.Process.killProcess(pid);
+                            }
+                        }, 300);
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -2186,7 +2237,7 @@ public class Controller
                 saveDataUri();
             } else {
                 DownloadHandler.onDownloadStartNoStream(mActivity, mText, mUserAgent,
-                        null, null, null, mPrivateBrowsing);
+                        null, null, null, mPrivateBrowsing, 0);
             }
             return true;
         }
@@ -2618,7 +2669,7 @@ public class Controller
              * root of the task. So we can use either true or false for
              * moveTaskToBack().
              */
-            mActivity.moveTaskToBack(true);
+            showExitDialog(mActivity);
             return;
         }
         if (current.canGoBack()) {
@@ -2632,9 +2683,6 @@ public class Controller
                 // Now we close the other tab
                 closeTab(current);
             } else {
-                if ((current.getAppId() != null) || current.closeOnBack()) {
-                    closeCurrentTab(true);
-                }
                 /*
                  * Instead of finishing the activity, simply push this to the back
                  * of the stack and let ActivityManager to choose the foreground
@@ -2642,7 +2690,7 @@ public class Controller
                  * root of the task. So we can use either true or false for
                  * moveTaskToBack().
                  */
-                mActivity.moveTaskToBack(true);
+                showExitDialog(mActivity);
             }
         }
     }

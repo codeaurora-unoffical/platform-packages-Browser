@@ -22,14 +22,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.provider.Browser;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebIconDatabase;
@@ -49,9 +53,13 @@ import com.android.browser.provider.BrowserProvider;
 import com.android.browser.search.SearchEngine;
 import com.android.browser.search.SearchEngines;
 
+import java.io.InputStream;
+import java.lang.Class;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.WeakHashMap;
 
 /**
@@ -88,6 +96,8 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             FROYO_USERAGENT,
             HONEYCOMB_USERAGENT,
     };
+
+    private static final String TAG = "BrowserSettings";
 
     // The minimum min font size
     // Aka, the lower bounds for the min font size range
@@ -129,6 +139,9 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
 
     private static String sFactoryResetUrl;
 
+    // add for carrier feature
+    private static Context sResPackageCtx;
+
     public static void initialize(final Context context) {
         sInstance = new BrowserSettings(context);
     }
@@ -144,6 +157,16 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         mManagedSettings = new LinkedList<WeakReference<WebSettings>>();
         mCustomUserAgents = new WeakHashMap<WebSettings, String>();
         mAutofillHandler.asyncLoadFromDb();
+
+        // add for carrier feature
+        try {
+            sResPackageCtx = context.createPackageContext(
+                "com.android.browser.res",
+                Context.CONTEXT_IGNORE_SECURITY);
+        } catch (Exception e) {
+            Log.e("Res_Update", "Create Res Apk Failed");
+        }
+
         BackgroundHandler.execute(mSetup);
     }
 
@@ -225,7 +248,67 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
                 mPrefs.edit().remove(PREF_TEXT_SIZE).apply();
             }
 
-            sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+
+            // add for carrier homepage feature
+            String browserRes = SystemProperties.get("persist.env.c.browser.resource", "default");
+            if ("cu".equals(browserRes)) {
+                int resID = sResPackageCtx.getResources().getIdentifier(
+                        "homepage_base", "string", "com.android.browser.res");
+                sFactoryResetUrl = sResPackageCtx.getResources().getString(resID);
+            } else if ("ct".equals(browserRes)) {
+                int resID = sResPackageCtx.getResources().getIdentifier(
+                        "homepage_base", "string", "com.android.browser.res");
+                sFactoryResetUrl = sResPackageCtx.getResources().getString(resID);
+
+                int pathID = sResPackageCtx.getResources().getIdentifier(
+                        "homepage_path", "string", "com.android.browser.res");
+                String path = sResPackageCtx.getResources().getString(pathID);
+                Locale locale = Locale.getDefault();
+                path = path.replace("%y", locale.getLanguage().toLowerCase());
+                path = path.replace("%z", '_'+locale.getCountry().toLowerCase());
+                boolean useCountry = true;
+                boolean useLanguage = true;
+                InputStream is = null;
+                AssetManager am = mContext.getAssets();
+                try {
+                    is = am.open(path);
+                } catch (Exception ignored) {
+                    useCountry = false;
+                    path = sResPackageCtx.getResources().getString(pathID);
+                    path = path.replace("%y", locale.getLanguage().toLowerCase());
+                    path = path.replace("%z", "");
+                    try {
+                        is = am.open(path);
+                    } catch (Exception ignoredlanguage) {
+                        useLanguage = false;
+                    }
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (Exception ignored) {}
+                    }
+                }
+
+                if (!useCountry && !useLanguage) {
+                    sFactoryResetUrl = sFactoryResetUrl.replace("%y%z", "en");
+                } else {
+                    sFactoryResetUrl = sFactoryResetUrl.replace("%y",
+                            locale.getLanguage().toLowerCase());
+                    sFactoryResetUrl = sFactoryResetUrl.replace("%z", useCountry ?
+                            '_' + locale.getCountry().toLowerCase() : "");
+                }
+            } else {
+                sFactoryResetUrl = mContext.getResources().getString(R.string.homepage_base);
+            }
+
+            if (!mPrefs.contains(PREF_DEFAULT_TEXT_ENCODING)) {
+                if (!"default".equals(browserRes)) {
+                    mPrefs.edit().putString(PREF_DEFAULT_TEXT_ENCODING,
+                            "GBK").apply();
+                }
+            }
+
             if (sFactoryResetUrl.indexOf("{CID}") != -1) {
                 sFactoryResetUrl = sFactoryResetUrl.replace("{CID}",
                     BrowserProvider.getClientId(mContext.getContentResolver()));
@@ -271,7 +354,18 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         settings.setSaveFormData(saveFormdata());
         settings.setUseWideViewPort(isWideViewport());
 
-        String ua = mCustomUserAgents.get(settings);
+        // add for carrier useragent feature
+        String ua = null;
+        try {
+            Class c = Class.forName("com.qrd.useragent.UserAgentHandler");
+            Object cObj = c.newInstance();
+            Method m = c.getDeclaredMethod("getUAString", Context.class);
+            ua = (String)m.invoke(cObj, mContext);
+        } catch (Exception e) {
+            Log.e(TAG, "plug in Load failed, err " + e);
+            ua = mCustomUserAgents.get(settings);
+        }
+
         if (ua != null) {
             settings.setUserAgentString(ua);
         } else {
@@ -619,6 +713,11 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         }
     }
 
+    public String getDownloadPath() {
+        return mPrefs.getString(PREF_DOWNLOAD_PATH,
+                DownloadHandler.getDefaultDownloadPath(mContext));
+    }
+
     // -----------------------------
     // getter/setters for accessibility_preferences.xml
     // -----------------------------
@@ -663,7 +762,11 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
     // -----------------------------
 
     public String getSearchEngineName() {
-        return mPrefs.getString(PREF_SEARCH_ENGINE, SearchEngine.GOOGLE);
+        String defaultSearchEngineValue = mContext.getString(R.string.default_search_engine_value);
+        if (defaultSearchEngineValue == null) {
+            defaultSearchEngineValue = SearchEngine.GOOGLE;
+        }
+        return mPrefs.getString(PREF_SEARCH_ENGINE, defaultSearchEngineValue);
     }
 
     public boolean allowAppTabs() {
