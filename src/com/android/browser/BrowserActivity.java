@@ -17,11 +17,13 @@
 package com.android.browser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.ActionMode;
@@ -33,8 +35,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.JavascriptInterface;
 
+import com.android.browser.UI.ComboViews;
 import com.android.browser.stub.NullController;
+
 import com.google.common.annotations.VisibleForTesting;
 
 public class BrowserActivity extends Activity {
@@ -50,6 +57,21 @@ public class BrowserActivity extends Activity {
     private final static boolean LOGV_ENABLED = Browser.LOGV_ENABLED;
 
     private ActivityController mController = NullController.INSTANCE;
+    private Handler mHandler = new Handler();
+
+    private UiController mUiController;
+    private Handler mHandlerEx = new Handler();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+           if (mUiController != null) {
+               WebView current = mUiController.getCurrentWebView();
+               if (current != null) {
+                   current.postInvalidate();
+               }
+           }
+        }
+    };
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -85,9 +107,13 @@ public class BrowserActivity extends Activity {
         boolean xlarge = isTablet(this);
         UI ui = null;
         if (xlarge) {
-            ui = new XLargeUi(this, controller);
+            XLargeUi tablet = new XLargeUi(this, controller);
+            ui = tablet;
+            mUiController = tablet.getUiController();
         } else {
-            ui = new PhoneUi(this, controller);
+            PhoneUi phone = new PhoneUi(this, controller);
+            ui = phone;
+            mUiController = phone.getUiController();
         }
         controller.setUi(ui);
         return controller;
@@ -194,6 +220,9 @@ public class BrowserActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mController.onConfgurationChanged(newConfig);
+
+        //For avoiding bug CR520353 temporarily, delay 300ms to refresh WebView.
+        mHandlerEx.postDelayed(runnable, 300);
     }
 
     @Override
@@ -217,6 +246,22 @@ public class BrowserActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!mController.onOptionsItemSelected(item)) {
+            if (item.getItemId() == R.id.about_menu_id) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.about);
+                builder.setCancelable(true);
+                String ua = "";
+                final WebView current = getController().getCurrentWebView();
+                if (current != null) {
+                    final WebSettings s = current.getSettings();
+                    if (s != null) {
+                        ua = s.getUserAgentString();
+                    }
+                }
+                builder.setMessage("Agent:" + ua);
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.create().show();
+            }
             return super.onOptionsItemSelected(item);
         }
         return true;
@@ -304,4 +349,29 @@ public class BrowserActivity extends Activity {
                 super.dispatchGenericMotionEvent(ev);
     }
 
+    // add for carrier homepage feature
+    @JavascriptInterface
+    public void loadBookmarks() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mController instanceof Controller) {
+                    ((Controller)mController).bookmarksOrHistoryPicker(ComboViews.Bookmarks);
+                }
+            }
+        });
+    }
+
+    // add for carrier homepage feature
+    @JavascriptInterface
+    public void loadHistory() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mController instanceof Controller) {
+                    ((Controller)mController).bookmarksOrHistoryPicker(ComboViews.History);
+                }
+            }
+        });
+    }
 }
