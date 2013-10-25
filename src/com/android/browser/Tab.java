@@ -70,6 +70,8 @@ import android.widget.Toast;
 
 import com.android.browser.TabControl.OnThumbnailUpdatedListener;
 import com.android.browser.homepages.HomeProvider;
+import com.android.browser.mynavigation.MyNavigationUtil;
+import com.android.browser.provider.MyNavigationProvider;
 import com.android.browser.provider.SnapshotProvider.Snapshots;
 
 import java.io.ByteArrayOutputStream;
@@ -626,8 +628,12 @@ class Tab implements PictureListener {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view,
                 String url) {
-            WebResourceResponse res = HomeProvider.shouldInterceptRequest(
-                    mContext, url);
+            WebResourceResponse res;
+            if (MyNavigationUtil.MY_NAVIGATION.equals(url)) {
+                res = MyNavigationProvider.shouldInterceptRequest(mContext, url);
+            } else {
+                res = HomeProvider.shouldInterceptRequest(mContext, url);
+            }
             return res;
         }
 
@@ -1878,6 +1884,8 @@ class Tab implements PictureListener {
             return false;
         }
         long size = savedFile.length();
+        if (values == null)
+            return false;
         values.put(Snapshots.VIEWSTATE_PATH, path);
         values.put(Snapshots.VIEWSTATE_SIZE, size);
         return true;
