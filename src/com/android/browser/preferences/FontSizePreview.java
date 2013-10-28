@@ -18,6 +18,7 @@ package com.android.browser.preferences;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -26,9 +27,13 @@ import android.webkit.WebView;
 import com.android.browser.BrowserSettings;
 import com.android.browser.R;
 
+import java.util.Locale;
+
 public class FontSizePreview extends WebViewPreview {
 
     static final String HTML_FORMAT = "<!DOCTYPE html><html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><style type=\"text/css\">p { margin: 2px auto;}</style><body><p style=\"font-size: 4pt\">%s</p><p style=\"font-size: 8pt\">%s</p><p style=\"font-size: 10pt\">%s</p><p style=\"font-size: 14pt\">%s</p><p style=\"font-size: 18pt\">%s</p></body></html>";
+    static final String HTML_FORMAT_MIRROR = "<!DOCTYPE html><html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><style type=\"text/css\">p { margin: 1px;}</style><body><p style=\"text-align:right\"><font size=\"0.5\">%s</font></p><p style=\"text-align:right\"><font size=\"1.5\">%s</font></p><p style=\"text-align:right\"><font size=\"2.5\">%s</font></p><p style=\"text-align:right\"><font size=\"4.5\">%s</font></p><p style=\"text-align:right\"><font size=\"5\">%s</font></p></body></html>";
+    Context mContext;
 
     String mHtml;
 
@@ -48,6 +53,7 @@ public class FontSizePreview extends WebViewPreview {
     @Override
     protected void init(Context context) {
         super.init(context);
+        mContext = context;
         Resources res = context.getResources();
         Object[] visualNames = res.getStringArray(R.array.pref_text_size_choices);
         mHtml = String.format(HTML_FORMAT, visualNames);
@@ -61,6 +67,14 @@ public class FontSizePreview extends WebViewPreview {
         BrowserSettings bs = BrowserSettings.getInstance();
         ws.setMinimumFontSize(bs.getMinimumFontSize());
         ws.setTextZoom(bs.getTextZoom());
+
+        // Change for RTL
+        if (TextUtils.getLayoutDirectionFromLocale(Locale.getDefault())
+                == View.LAYOUT_DIRECTION_RTL) {
+            Resources res = mContext.getResources();
+            Object[] visualNames = res.getStringArray(R.array.pref_text_size_choices);
+            mHtml = String.format(HTML_FORMAT_MIRROR, visualNames);
+        }
         mWebView.loadDataWithBaseURL(null, mHtml, "text/html", "utf-8", null);
     }
 

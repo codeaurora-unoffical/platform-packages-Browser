@@ -22,27 +22,27 @@
     android:divider="?android:attr/dividerVertical"
     android:dividerPadding="12dp"
     android:showDividers="middle"
-    android:gravity="right"
+    android:gravity="end"
     android:minHeight="?android:attr/actionBarSize">
     <ImageView
         android:id="@+id/open_context_menu_id"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
+        android:paddingStart="16dip"
+        android:paddingEnd="16dip"
         android:src="@drawable/ic_web_holo_dark" />
     <ImageView
         android:id="@+id/new_window_context_menu_id"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
+        android:paddingStart="16dip"
+        android:paddingEnd="16dip"
         android:src="@drawable/ic_new_window_holo_dark" />
     <ImageView
         android:id="@+id/info"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
+        android:paddingStart="16dip"
+        android:paddingEnd="16dip"
         android:src="@drawable/ic_home_info_holo_dark" />
 </LinearLayout>

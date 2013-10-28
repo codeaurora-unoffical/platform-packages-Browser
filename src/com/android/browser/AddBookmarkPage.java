@@ -184,7 +184,9 @@ public class AddBookmarkPage extends Activity
      */
     private void setShowBookmarkIcon(boolean show) {
         Drawable drawable = show ? mHeaderIcon: null;
-        mTopLevelLabel.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+
+        // Change for RTL.
+        mTopLevelLabel.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
     }
 
     @Override

@@ -98,7 +98,9 @@ public class FolderSpinnerAdapter extends BaseAdapter {
         }
         textView.setGravity(Gravity.CENTER_VERTICAL);
         Drawable drawable = mContext.getResources().getDrawable(drawableResource);
-        textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null,
+
+        // Changed for RTL.
+        textView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null,
                 null, null);
     }
 

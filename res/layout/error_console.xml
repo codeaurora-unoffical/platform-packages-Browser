@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="2dip"
         android:paddingBottom="2dip"
-        android:paddingLeft="5dip"
+        android:paddingStart="5dip"
         style="?android:attr/listSeparatorTextViewStyle"
         android:visibility="gone"
     />
@@ -54,7 +54,7 @@
             android:scrollHorizontally="true"
             android:inputType="text"
             android:layout_width="0dip"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_weight="1.0"
         />
 

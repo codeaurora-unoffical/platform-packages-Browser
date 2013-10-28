@@ -111,7 +111,16 @@ public class PageProgressView extends ImageView {
 //        super.onDraw(canvas);
         Drawable d = getDrawable();
         d.setBounds(mBounds);
-        d.draw(canvas);
+
+        // Change for RTL.
+        if (isLayoutRtl()) {
+            canvas.save();
+            canvas.scale(-1, 1, getWidth()/2, getHeight()/2);
+            d.draw(canvas);
+            canvas.restore();
+        } else {
+            d.draw(canvas);
+        }
     }
 
 }

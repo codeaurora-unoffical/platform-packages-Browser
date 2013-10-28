@@ -25,12 +25,12 @@
         android:id="@+id/group_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="50dp"
+        android:paddingStart="50dp"
         android:gravity="center_vertical" />
 
     <FrameLayout
         android:id="@+id/crumb_holder"
-        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

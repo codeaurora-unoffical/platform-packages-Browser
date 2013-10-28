@@ -24,13 +24,13 @@
         android:src="@drawable/ic_search_category_history"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="8dip" />
+        android:paddingStart="8dip" />
     <ImageView
         android:id="@+id/favicon"
         android:layout_width="52dip"
         android:layout_height="match_parent"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
+        android:paddingStart="16dip"
+        android:paddingEnd="16dip"
         android:scaleType="fitCenter" />
     <FrameLayout
         android:id="@+id/toggle_container"

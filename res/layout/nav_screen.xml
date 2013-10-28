@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         android:layout_gravity="top"
-        android:gravity="right"
+        android:gravity="end"
         android:background="#CC0d0d0d">
         <ImageButton
             android:id="@+id/newtab"
@@ -52,8 +52,8 @@
             android:id="@+id/more"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="8dip"
-            android:paddingRight="8dip"
+            android:paddingStart="8dip"
+            android:paddingEnd="8dip"
             style="@style/HoloButton"
             android:gravity="center_vertical"
             android:contentDescription="@string/accessibility_button_more"

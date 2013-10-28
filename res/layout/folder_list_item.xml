@@ -32,6 +32,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:gravity="center_vertical"
-        android:paddingLeft="6dip"
+        android:paddingStart="6dip"
         android:minHeight="?android:attr/listPreferredItemHeight" />
 </LinearLayout>
