@@ -31,6 +31,7 @@ import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.provider.Browser;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Log;
@@ -364,6 +365,30 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         } catch (Exception e) {
             Log.e(TAG, "plug in Load failed, err " + e);
             ua = mCustomUserAgents.get(settings);
+        }
+
+        //add carrrier useragent feature for resource overlay solution
+        if (ua == null) {
+            ua = mContext.getResources().getString(R.string.def_useragent);
+            if (TextUtils.isEmpty(ua)) {
+                ua = null;
+            } else {
+                StringBuffer usBuffer = new StringBuffer();
+                //Add lanauage
+                final String language = Locale.getDefault().getLanguage();
+                if (language != null) {
+                    usBuffer.append(language);
+                    final String country = Locale.getDefault().getCountry();
+                    if (country != null) {
+                        usBuffer.append("-");
+                        usBuffer.append(country.toLowerCase());
+                    }
+                } else {
+                    //default to "en"
+                    usBuffer.append("en");
+                }
+                ua = String.format(ua, usBuffer);
+            }
         }
 
         if (ua != null) {
