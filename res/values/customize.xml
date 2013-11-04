@@ -33,4 +33,22 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <!-- Browser history need or not, default value is true -->
     <bool name="def_history_needed">true</bool>
+
+    <!-- Bookmark name for carrier customize bookmarks, default value is empty -->
+    <string name="bookmark_name_item1" translatable="false"></string>
+    <string name="bookmark_name_item2" translatable="false"></string>
+    <string name="bookmark_name_item3" translatable="false"></string>
+    <string name="bookmark_name_item4" translatable="false"></string>
+    <string name="bookmark_name_item5" translatable="false"></string>
+    <string name="bookmark_name_item6" translatable="false"></string>
+    <string name="bookmark_name_item7" translatable="false"></string>
+
+    <!-- Bookmark url for carrier customize bookmarks, default value is empty -->
+    <string name="bookmark_url_item1" translatable="false"></string>
+    <string name="bookmark_url_item2" translatable="false"></string>
+    <string name="bookmark_url_item3" translatable="false"></string>
+    <string name="bookmark_url_item4" translatable="false"></string>
+    <string name="bookmark_url_item5" translatable="false"></string>
+    <string name="bookmark_url_item6" translatable="false"></string>
+    <string name="bookmark_url_item7" translatable="false"></string>
 </resources>

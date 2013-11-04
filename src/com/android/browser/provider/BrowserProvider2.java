@@ -679,6 +679,8 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 String parent = Long.toString(parentId);
                 String now = Long.toString(System.currentTimeMillis());
                 for (int i = 0; i < size; i = i + 2) {
+                    if (TextUtils.isEmpty(bookmarks[i]))
+                        continue;//empty bookmarks name is defined for carrier, so ignore it defaultly.
                     CharSequence bookmarkDestination = replaceSystemPropertyInString(getContext(),
                             bookmarks[i + 1]);
                     db.execSQL("INSERT INTO bookmarks (" +
