@@ -30,4 +30,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <!-- Default user agent string, default value is empty -->
     <string name="def_useragent" translatable="false"></string>
+
+    <!-- Browser history need or not, default value is true -->
+    <bool name="def_history_needed">true</bool>
 </resources>
