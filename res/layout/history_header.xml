@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingLeft="35dip"
+        android:paddingStart="35dip"
         android:gravity="center_vertical"
         android:background="?android:attr/activatedBackgroundIndicator"
         />

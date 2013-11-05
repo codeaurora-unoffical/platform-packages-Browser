@@ -25,8 +25,8 @@
         android:layout_width="wrap_content"
         android:text="@string/username"
         android:layout_marginTop="12dip"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip" />
+        android:layout_marginStart="20dip"
+        android:layout_marginEnd="20dip" />
             
     <EditText
         android:id="@+id/username_edit"
@@ -34,8 +34,8 @@
         android:layout_width="match_parent"
         android:scrollHorizontally="true"
         android:inputType="text"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
+        android:layout_marginStart="20dip"
+        android:layout_marginEnd="20dip"
         android:layout_marginBottom="12dip"
         android:singleLine="true"
         android:imeOptions="actionNext" />
@@ -44,8 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="@string/password"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip" />
+        android:layout_marginStart="20dip"
+        android:layout_marginEnd="20dip" />
             
     <EditText
         android:id="@+id/password_edit"
@@ -53,8 +53,8 @@
         android:layout_width="match_parent"
         android:scrollHorizontally="true"
         android:inputType="textPassword"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
+        android:layout_marginStart="20dip"
+        android:layout_marginEnd="20dip"
         android:layout_marginBottom="12dip"
         android:singleLine="true"
         android:imeOptions="actionDone" />

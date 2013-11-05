@@ -25,12 +25,12 @@
         android:src="@drawable/ic_search_category_history"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="16dip" />
+        android:paddingStart="16dip" />
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="8dip"
+        android:paddingStart="8dip"
         android:singleLine="true"
         android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -39,7 +39,7 @@
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:paddingLeft="16dip"
+        android:paddingStart="16dip"
         android:singleLine="true"
         android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:paddingRight="16dip"
+        android:paddingEnd="16dip"
         style="@style/HoloButton"
         android:src="@drawable/ic_bookmarks_history_holo_dark" 
         android:contentDescription="@string/accessibility_button_bookmarks" />

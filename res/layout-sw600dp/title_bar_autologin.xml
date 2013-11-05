@@ -26,8 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/primary_text_light"
-        android:paddingLeft="15dip"
-        android:paddingRight="15dip"
+        android:paddingStart="15dip"
+        android:paddingEnd="15dip"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
     <Spinner
         android:id="@+id/autologin_account"
@@ -38,7 +38,7 @@
         android:id="@+id/autologin_login"
         android:text="@string/autologin_bar_login_text"
         style="@android:style/Widget.Holo.Light.Button"
-        android:layout_marginRight="15dip"
+        android:layout_marginEnd="15dip"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content" />
     <ProgressBar
@@ -63,7 +63,7 @@
         android:id="@+id/autologin_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="15dip"
+        android:paddingEnd="15dip"
         android:background="@null"
         android:src="@*android:drawable/btn_close"/>
 </com.android.browser.AutologinBar>

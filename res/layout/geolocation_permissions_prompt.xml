@@ -36,15 +36,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/message"
-        android:layout_alignLeft="@id/message" />
+        android:layout_alignStart="@id/message" />
     <TextView
-        android:paddingLeft="4dip"
+        android:paddingStart="4dip"
         android:text="@string/geolocation_permissions_prompt_remember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_alignBaseline="@id/remember"
-        android:layout_toRightOf="@id/remember" />
+        android:layout_toEndOf="@id/remember" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,8 +60,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="2dip"
-            android:paddingRight="2dip"
+            android:paddingStart="2dip"
+            android:paddingEnd="2dip"
             android:measureWithLargestChild="true"
             android:background="@null">
             <Button
