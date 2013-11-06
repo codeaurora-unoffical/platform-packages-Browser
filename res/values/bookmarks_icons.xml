@@ -1,34 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="bookmark_preloads">
-        <item>@raw/favicon_google</item>
-        <item>@raw/thumb_google</item>
-        <item>@raw/favicon_picasa</item>
-        <item>@raw/thumb_picasa</item>
-        <item>@raw/favicon_yahoo</item>
-        <item>@raw/thumb_yahoo</item>
-        <item>@raw/favicon_msn</item>
-        <item>@raw/thumb_msn</item>
-        <item>@raw/favicon_twitter</item>
-        <item>@raw/thumb_twitter</item>
-        <item>@raw/favicon_facebook</item>
-        <item>@raw/thumb_facebook</item>
-        <item>@raw/favicon_wikipedia</item>
-        <item>@raw/thumb_wikipedia</item>
-        <item>@raw/favicon_ebay</item>
-        <item>@raw/thumb_ebay</item>
-        <item>@raw/favicon_cnn</item>
-        <item>@raw/thumb_cnn</item>
-        <item>@raw/favicon_nytimes</item>
-        <item>@raw/thumb_nytimes</item>
-        <item>@raw/favicon_espn</item>
-        <item>@raw/thumb_espn</item>
-        <item>@raw/favicon_amazon</item>
-        <item>@raw/thumb_amazon</item>
-        <item>@raw/favicon_weatherchannel</item>
-        <item>@raw/thumb_weatherchannel</item>
-        <item>@raw/favicon_bbc</item>
-        <item>@raw/thumb_bbc</item>
         <item>@raw/favicon_item1</item>
         <item>@raw/thumb_item1</item>
         <item>@raw/favicon_item2</item>
@@ -43,5 +15,21 @@
         <item>@raw/thumb_item6</item>
         <item>@raw/favicon_item7</item>
         <item>@raw/thumb_item7</item>
+        <item>@raw/favicon_item8</item>
+        <item>@raw/thumb_item8</item>
+        <item>@raw/favicon_item9</item>
+        <item>@raw/thumb_item9</item>
+        <item>@raw/favicon_item10</item>
+        <item>@raw/thumb_item10</item>
+        <item>@raw/favicon_item11</item>
+        <item>@raw/thumb_item11</item>
+        <item>@raw/favicon_item12</item>
+        <item>@raw/thumb_item12</item>
+        <item>@raw/favicon_item13</item>
+        <item>@raw/thumb_item13</item>
+        <item>@raw/favicon_item14</item>
+        <item>@raw/thumb_item14</item>
+        <item>@raw/favicon_item15</item>
+        <item>@raw/thumb_item15</item>
     </array>
 </resources>
