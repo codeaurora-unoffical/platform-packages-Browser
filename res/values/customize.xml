@@ -35,20 +35,36 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <bool name="def_history_needed">true</bool>
 
     <!-- Bookmark name for carrier customize bookmarks, default value is empty -->
-    <string name="bookmark_name_item1" translatable="false"></string>
-    <string name="bookmark_name_item2" translatable="false"></string>
-    <string name="bookmark_name_item3" translatable="false"></string>
-    <string name="bookmark_name_item4" translatable="false"></string>
-    <string name="bookmark_name_item5" translatable="false"></string>
-    <string name="bookmark_name_item6" translatable="false"></string>
-    <string name="bookmark_name_item7" translatable="false"></string>
+    <string name="bookmark_name_item1" translatable="false">Google</string>
+    <string name="bookmark_name_item2" translatable="false">Picasa</string>
+    <string name="bookmark_name_item3" translatable="false">Yahoo!</string>
+    <string name="bookmark_name_item4" translatable="false">MSN</string>
+    <string name="bookmark_name_item5" translatable="false">Twitter</string>
+    <string name="bookmark_name_item6" translatable="false">Facebook</string>
+    <string name="bookmark_name_item7" translatable="false">Wikipedia</string>
+    <string name="bookmark_name_item8" translatable="false">eBay</string>
+    <string name="bookmark_name_item9" translatable="false">CNN</string>
+    <string name="bookmark_name_item10" translatable="false">NY Times</string>
+    <string name="bookmark_name_item11" translatable="false">ESPN</string>
+    <string name="bookmark_name_item12" translatable="false">Amazon</string>
+    <string name="bookmark_name_item13" translatable="false">Weather Channel</string>
+    <string name="bookmark_name_item14" translatable="false">BBC</string>
+    <string name="bookmark_name_item15" translatable="false"></string>
 
     <!-- Bookmark url for carrier customize bookmarks, default value is empty -->
-    <string name="bookmark_url_item1" translatable="false"></string>
-    <string name="bookmark_url_item2" translatable="false"></string>
-    <string name="bookmark_url_item3" translatable="false"></string>
-    <string name="bookmark_url_item4" translatable="false"></string>
-    <string name="bookmark_url_item5" translatable="false"></string>
-    <string name="bookmark_url_item6" translatable="false"></string>
-    <string name="bookmark_url_item7" translatable="false"></string>
+    <string name="bookmark_url_item1" translatable="false">http://www.google.com/</string>
+    <string name="bookmark_url_item2" translatable="false">http://picasaweb.google.com/</string>
+    <string name="bookmark_url_item3" translatable="false">http://www.yahoo.com/</string>
+    <string name="bookmark_url_item4" translatable="false">http://www.msn.com/</string>
+    <string name="bookmark_url_item5" translatable="false">http://twitter.com/</string>
+    <string name="bookmark_url_item6" translatable="false">http://www.facebook.com/</string>
+    <string name="bookmark_url_item7" translatable="false">http://www.wikipedia.org/</string>
+    <string name="bookmark_url_item8" translatable="false">http://www.ebay.com/</string>
+    <string name="bookmark_url_item9" translatable="false">http://www.cnn.com/</string>
+    <string name="bookmark_url_item10" translatable="false">http://www.nytimes.com/</string>
+    <string name="bookmark_url_item11" translatable="false">http://espn.com/</string>
+    <string name="bookmark_url_item12" translatable="false">http://www.amazon.com/</string>
+    <string name="bookmark_url_item13" translatable="false">http://www.weather.com/</string>
+    <string name="bookmark_url_item14" translatable="false">http://www.bbc.co.uk/</string>
+    <string name="bookmark_url_item15" translatable="false"></string>
 </resources>
