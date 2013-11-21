@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -174,6 +175,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         mController = controller;
         if (sInitialized) {
             syncSharedSettings();
+        }
+        if (mController.getActivity() != null) {
+            if (mPrefs.getBoolean(PREF_LANDSCAPEONLY, false)) {
+                mController.getActivity().setRequestedOrientation(
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                mController.getActivity().setRequestedOrientation(
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            }
         }
     }
 
@@ -484,6 +494,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             }
         } else if (PREF_LINK_PREFETCH.equals(key)) {
             updateConnectionType();
+        } else if (mController != null && mController.getActivity() != null
+                && PREF_LANDSCAPEONLY.equals(key)) {
+            if (sharedPreferences.getBoolean(key, false)) {
+                mController.getActivity().setRequestedOrientation(
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                mController.getActivity().setRequestedOrientation(
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            }
         }
     }
 

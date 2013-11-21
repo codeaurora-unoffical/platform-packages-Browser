@@ -49,6 +49,8 @@ public interface PreferenceKeys {
     static final String PREF_ALLOW_APP_TABS = "allow_apptabs";
     // Keys for download path settings
     static final String PREF_DOWNLOAD_PATH = "download_path_setting_screen";
+
+    static final String PREF_LANDSCAPEONLY = "landscape_only";
     // ----------------------
     // Keys for debug_preferences.xml
     // ----------------------
