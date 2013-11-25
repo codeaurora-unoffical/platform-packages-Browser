@@ -376,6 +376,8 @@ class Tab implements PictureListener {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            mPageLoadProgress = 100;
+            mInPageLoad = false;
             mDisableOverrideUrlLoading = false;
             if (!isPrivateBrowsingEnabled()) {
                 LogTag.logPageFinishedLoading(
