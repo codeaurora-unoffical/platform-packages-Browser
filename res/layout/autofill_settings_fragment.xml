@@ -156,7 +156,7 @@
                     <EditText android:id="@+id/autofill_profile_editor_email_address_edit"
                         style="@style/AutofillProfileEditText"
                         android:inputType="textEmailAddress"
-                        android:imeOptions="actionDone|flagNoExtractUi" />
+                        android:imeOptions="actionDone|flagNoExtractUi|flagNoFullscreen" />
                 </TableRow>
             </TableLayout>
        </LinearLayout>
