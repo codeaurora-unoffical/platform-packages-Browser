@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.AssetManager;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -33,7 +34,6 @@ import android.provider.Browser;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.GeolocationPermissions;
@@ -175,6 +175,15 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         mController = controller;
         if (sInitialized) {
             syncSharedSettings();
+        }
+        if (mController != null && mController.getActivity() != null) {
+            if (mPrefs.getBoolean(PREF_LANDSCAPE_ONLY, false)) {
+                mController.getActivity().setRequestedOrientation(
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                mController.getActivity().setRequestedOrientation(
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            }
         }
     }
 
@@ -509,6 +518,16 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
             }
         } else if (PREF_LINK_PREFETCH.equals(key)) {
             updateConnectionType();
+        } else if (PREF_LANDSCAPE_ONLY.equals(key)) {
+            if (mController != null && mController.getActivity() != null) {
+                if (sharedPreferences.getBoolean(key, false)) {
+                    mController.getActivity().setRequestedOrientation(
+                            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    mController.getActivity().setRequestedOrientation(
+                            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                }
+            }
         }
     }
 
