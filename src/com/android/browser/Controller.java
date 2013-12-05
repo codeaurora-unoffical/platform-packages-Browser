@@ -481,7 +481,7 @@ public class Controller
     }
 
     int getMaxTabs() {
-        return mActivity.getResources().getInteger(R.integer.max_tabs);
+        return 1;
     }
 
     @Override
