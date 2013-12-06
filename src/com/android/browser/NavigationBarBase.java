@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,6 +34,7 @@ import android.view.View.OnFocusChangeListener;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.browser.UrlInputView.UrlInputListener;
 
@@ -41,6 +43,7 @@ import java.net.URISyntaxException;
 public class NavigationBarBase extends LinearLayout implements
         OnClickListener, UrlInputListener, OnFocusChangeListener,
         TextWatcher {
+    private final static String TAG = "NavigationBarBase";
 
     protected BaseUi mBaseUi;
     protected TitleBar mTitleBar;
@@ -162,8 +165,10 @@ public class NavigationBarBase extends LinearLayout implements
     public void onAction(String text, String extra, String source) {
         stopEditingUrl();
         if (UrlInputView.TYPED.equals(source)) {
+            String browserRes = mContext.getResources().getString(R.string.config_carrier_resource);
+            boolean wap2estore = "ct".equals(browserRes);
             String url = null;
-            if (isRtspTypeUrl(text)) {
+            if (isRtspTypeUrl(text) || (wap2estore && isEstoreTypeUrl(text))) {
                 url = text;
             } else {
                 url = UrlUtils.smartUrlFilter(text, false);
@@ -182,10 +187,20 @@ public class NavigationBarBase extends LinearLayout implements
             // here add to support inputing url started with "rtsp://"
             if (url != null && t != null && isRtspTypeUrl(url)) {
                 if (handleRtspTypeUrl(url)) {
+                    setDisplayTitle(text);
+                    return;
+                }
+            }
+
+            // add for carrier feature - wap2estore
+            if (url != null && t != null && wap2estore && isEstoreTypeUrl(url)) {
+                if (handleEstoreTypeUrl(url)) {
+                    setDisplayTitle(text);
                     return;
                 }
             }
         }
+
         Intent i = new Intent();
         String action = Intent.ACTION_SEARCH;
         i.setAction(action);
@@ -209,6 +224,13 @@ public class NavigationBarBase extends LinearLayout implements
         return false;
     }
 
+    private boolean isEstoreTypeUrl(String url) {
+        if (url != null && url.startsWith("estore:")) {
+            return true;
+        }
+        return false;
+    }
+
     private boolean handleRtspTypeUrl(String url) {
         Intent intent;
         // perform generic parsing of the URI to turn it into an Intent.
@@ -224,6 +246,33 @@ public class NavigationBarBase extends LinearLayout implements
         } catch (ActivityNotFoundException ex) {
             Log.w("Browser", "No Activity Found for " + url);
             return false;
+        }
+
+        return true;
+    }
+
+    private boolean handleEstoreTypeUrl(String url) {
+        if (url.getBytes().length > 256) {
+            Toast.makeText(mContext, R.string.estore_url_warning, Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        Intent intent;
+        // perform generic parsing of the URI to turn it into an Intent.
+        try {
+            intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+        } catch (URISyntaxException ex) {
+            Log.w("Browser", "Bad URI " + url + ": " + ex.getMessage());
+            return false;
+        }
+
+        try {
+            mContext.startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            String downloadUrl = mContext.getResources().getString(R.string.estore_homepage);
+            mUiController.loadUrl(mBaseUi.getActiveTab(), downloadUrl);
+            Toast.makeText(mContext, R.string.download_estore_app, Toast.LENGTH_LONG).show();
+            return true;
         }
 
         return true;
