@@ -39,8 +39,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,6 +57,7 @@ import android.provider.BrowserContract;
 import android.provider.BrowserContract.Images;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Intents.Insert;
+import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 import android.util.Log;
@@ -111,7 +115,12 @@ public class Controller
     private static final String SEND_APP_ID_EXTRA =
         "android.speech.extras.SEND_APPLICATION_ID_EXTRA";
     private static final String INCOGNITO_URI = "browser:incognito";
-
+    private static final String ACTION_WIFI_SELECTION_DATA_CONNECTION =
+            "android.net.wifi.cmcc.WIFI_SELECTION_DATA_CONNECTION";
+    // Remind switch to data connection if wifi is unavailable
+    private static final int NETWORK_SWITCH_TYPE_OK = 1;
+    private static final String WIFI_BROWSER_INTERACTION_REMIND_TYPE =
+            "wifi_browser_interaction_remind";
 
     // public message ids
     public final static int LOAD_URL = 1001;
@@ -171,6 +180,7 @@ public class Controller
     private Message mAutoFillSetupMessage;
 
     private boolean mShouldShowErrorConsole;
+    private boolean mNetworkShouldNotify = true;
 
     private SystemAllowGeolocationOrigins mSystemAllowGeolocationOrigins;
 
@@ -809,6 +819,33 @@ public class Controller
         return mLoadStopped;
     }
 
+    private void handleNetworkNotify(WebView view) {
+        ConnectivityManager conMgr = (ConnectivityManager) this.getContext().getSystemService(
+                Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = conMgr.getActiveNetworkInfo();
+        if (networkInfo == null
+                || (networkInfo != null && (networkInfo.getType() !=
+                ConnectivityManager.TYPE_WIFI))) {
+            int isReminder = Settings.System.getInt(
+                    mActivity.getContentResolver(),
+                    WIFI_BROWSER_INTERACTION_REMIND_TYPE,
+                    NETWORK_SWITCH_TYPE_OK);
+
+            if (isReminder == NETWORK_SWITCH_TYPE_OK) {
+                mNetworkShouldNotify = false;
+                Intent intent = new Intent(
+                        ACTION_WIFI_SELECTION_DATA_CONNECTION);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.getContext().startActivity(intent);
+            } else {
+                if (!mNetworkHandler.isNetworkUp()) {
+                    view.setNetworkAvailable(false);
+                }
+            }
+        }
+    }
+
     // WebViewController
 
     @Override
@@ -824,8 +861,16 @@ public class Controller
         // reset sync timer to avoid sync starts during loading a page
         CookieSyncManager.getInstance().resetSync();
 
-        if (!mNetworkHandler.isNetworkUp()) {
-            view.setNetworkAvailable(false);
+        WifiManager wifiMgr = (WifiManager) this.getContext()
+                .getSystemService(Context.WIFI_SERVICE);
+        String browserRes = mActivity.getResources().getString(R.string.config_carrier_resource);
+
+        if ("cmcc".equals(browserRes) && mNetworkShouldNotify && wifiMgr.isWifiEnabled()) {
+            handleNetworkNotify(view);
+        } else {
+            if (!mNetworkHandler.isNetworkUp()) {
+                view.setNetworkAvailable(false);
+            }
         }
 
         // when BrowserActivity just starts, onPageStarted may be called before
