@@ -117,11 +117,35 @@ http://www.opensearch.org/Specifications/OpenSearch/1.1/Draft_4#OpenSearch_1.1_p
     <item></item>
   </string-array>
   <string-array name="baidu" translatable="false">
+    <item>Baidu</item>
+    <item>baidu.com</item>
+    <item>http://www.baidu.com/favicon.ico</item>
+    <item>http://www.baidu.com/s?wd={searchTerms}</item>
+    <item>UTF-8</item>
+    <item></item>
+  </string-array>
+  <string-array name="baidu_cn" translatable="false">
     <item>&#x767e;&#x5ea6;</item>
     <item>baidu.com</item>
     <item>http://www.baidu.com/favicon.ico</item>
     <item>http://www.baidu.com/s?wd={searchTerms}</item>
-    <item>GB2312</item>
+    <item>UTF-8</item>
+    <item></item>
+  </string-array>
+  <string-array name="cmcc" translatable="false">
+    <item>139 Search</item>
+    <item>139.panguso.com</item>
+    <item>http://139.panguso.com/favicon.ico</item>
+    <item>http://139.panguso.com/page/search?rs=monternet&amp;q={searchTerms}</item>
+    <item>UTF-8</item>
+    <item></item>
+  </string-array>
+  <string-array name="cmcc_cn" translatable="false">
+    <item>139&#x641C;&#x7D22;</item>
+    <item>139.panguso.com</item>
+    <item>http://139.panguso.com/favicon.ico</item>
+    <item>http://139.panguso.com/page/search?rs=monternet&amp;q={searchTerms}</item>
+    <item>UTF-8</item>
     <item></item>
   </string-array>
   <string-array name="yahoo_ch" translatable="false">

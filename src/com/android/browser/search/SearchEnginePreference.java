@@ -57,6 +57,14 @@ class SearchEnginePreference extends ListPreference {
 
         setEntryValues(entryValues.toArray(new CharSequence[entryValues.size()]));
         setEntries(entries.toArray(new CharSequence[entries.size()]));
-    }
 
+        // When locale is China or US, we use Baidu as the default search engine.
+        // We use Google as the default search engine when in other locale.
+        String locale = context.getResources().getConfiguration().locale.toString();
+        if (locale.equals("zh_CN")) {
+            setDefaultValue("baidu_cn");
+        } else if (locale.equals("en_US")) {
+            setDefaultValue("baidu");
+        }
+    }
 }
