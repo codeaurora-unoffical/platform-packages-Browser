@@ -1023,6 +1023,11 @@
     <string name="exit_minimize">Minimize</string>
     <string name="exit_quit">Quit</string>
 
+    <!-- Add for wap2estore Feature -->
+    <string name="estore_homepage" translatable="false">http://3g.189store.com/downclient</string>
+    <string name="download_estore_app">Estore app does not exist, please download and install it.</string>
+    <string name="estore_url_warning">Launch Estore app failed, url is too long!</string>
+
     <!-- Add for download save path setting Feature -->
     <string name="invalid_path">"Path is invalid!"</string>
     <string name="path_wrong">"Wrong Path"</string>
