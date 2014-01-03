@@ -2025,6 +2025,13 @@ public class Controller
         mUploadHandler.openFileChooser(uploadMsg, acceptType, capture);
     }
 
+    @Override
+    public void showFileChooser(ValueCallback<String[]> uploadFilePaths, String acceptTypes,
+            boolean capture) {
+        mUploadHandler = new UploadHandler(this);
+        mUploadHandler.showFileChooser(uploadFilePaths, acceptTypes, capture);
+    }
+
     // thumbnails
 
     /**
