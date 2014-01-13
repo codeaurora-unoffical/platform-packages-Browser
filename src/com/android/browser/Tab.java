@@ -947,6 +947,16 @@ class Tab implements PictureListener {
             }
         }
 
+        @Override
+        public void showFileChooser(ValueCallback<String[]> uploadFilePaths, String acceptTypes,
+                boolean capture) {
+            if (mInForeground) {
+                mWebViewController.showFileChooser(uploadFilePaths, acceptTypes, capture);
+            } else {
+                uploadFilePaths.onReceiveValue(null);
+            }
+        }
+
         /**
          * Deliver a list of already-visited URLs
          */
