@@ -1111,7 +1111,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 Cursor cursor = db.rawQuery(query, args);
                 if (cursor != null) {
                     cursor.setNotificationUri(getContext().getContentResolver(),
-                            BrowserContract.AUTHORITY_URI);
+                            BrowserContract.Bookmarks.CONTENT_URI);
                 }
                 return cursor;
             }
