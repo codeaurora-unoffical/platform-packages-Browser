@@ -185,7 +185,7 @@ public class DownloadHandler {
             intent.setDataAndType(Uri.parse(url), mimetype);
             ResolveInfo info = activity.getPackageManager().resolveActivity(intent,
                     PackageManager.MATCH_DEFAULT_ONLY);
-            if (info != null) {
+            if (info != null && !mimetype.equalsIgnoreCase("application/octet-stream")) {
                 ComponentName myName = activity.getComponentName();
                 // If we resolved to ourselves, we don't want to attempt to
                 // load the url only to try and download it again.
