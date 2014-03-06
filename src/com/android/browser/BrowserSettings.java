@@ -375,8 +375,8 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
         // enable smooth transition for better performance during panning or
         // zooming
         settings.setEnableSmoothTransition(true);
-        // disable content url access
-        settings.setAllowContentAccess(false);
+        // enable content url access for "HOMEPAGE MOSTVISITED"
+        settings.setAllowContentAccess(true);
 
         // HTML5 API flags
         settings.setAppCacheEnabled(true);
