@@ -291,6 +291,12 @@
              </intent-filter>
          </receiver>
 
+        <receiver android:name=".MessagesReceivedReceiver">
+            <intent-filter>
+                <action android:name="com.android.mms.transaction.MESSAGE_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
         <provider android:name=".provider.SnapshotProvider"
                   android:authorities="com.android.browser.snapshots"
                   android:exported="false" />
