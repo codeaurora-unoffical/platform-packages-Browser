@@ -108,10 +108,13 @@ public class TitleBar extends RelativeLayout {
     }
 
     private void setFixedTitleBar() {
+        boolean isFixed = !mUseQuickControls
+                && !mContext.getResources().getBoolean(R.bool.hide_title);
+        isFixed |= mAccessibilityManager.isEnabled();
         // If getParent() returns null, we are initializing
         ViewGroup parent = (ViewGroup)getParent();
-        if (mIsFixedTitleBar && parent != null) return;
-        mIsFixedTitleBar = true;
+        if (mIsFixedTitleBar == isFixed && parent != null) return;
+        mIsFixedTitleBar = isFixed;
         setSkipTitleBarAnimations(true);
         show();
         setSkipTitleBarAnimations(false);
