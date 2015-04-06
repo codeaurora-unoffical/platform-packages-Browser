@@ -70,7 +70,6 @@ import com.android.browser.homepages.HomeProvider;
 import com.android.browser.provider.SnapshotProvider.Snapshots;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -574,9 +573,7 @@ class Tab implements PictureListener {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view,
                 String url) {
-            WebResourceResponse res = HomeProvider.shouldInterceptRequest(
-                    mContext, url);
-            return res;
+            return HomeProvider.shouldInterceptRequest(mContext, url);
         }
 
         @Override
