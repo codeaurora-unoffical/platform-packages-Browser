@@ -1,4 +1,4 @@
-BUILD_BROWSER := false
+BUILD_BROWSER := true
 
 ifeq ($(BUILD_BROWSER),true)
 
